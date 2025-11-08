@@ -29,6 +29,23 @@ const setBind = (key, val) => {
   });
 };
 
+const toOrdinal = (value) => {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n <= 0) return '';
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
+  switch (n % 10) {
+    case 1:
+      return `${n}st`;
+    case 2:
+      return `${n}nd`;
+    case 3:
+      return `${n}rd`;
+    default:
+      return `${n}th`;
+  }
+};
+
 const debounce = (fn, wait = 300) => {
   let timer;
   return function debounced(...args) {
@@ -471,7 +488,10 @@ function bindAgreement() {
   setBind('agent', els.agent?.value || '');
   const rent = Number(els.rent?.value || 0);
   setBind('rent', rent ? String(rent) : '0');
-  setBind('rentDay', els.rentDay?.value || '');
+  const rentDayVal = Number(els.rentDay?.value || 0);
+  const rentDay = rentDayVal ? String(rentDayVal) : '';
+  setBind('rentDay', rentDay);
+  setBind('rentDayOrdinal', rentDayVal ? toOrdinal(rentDayVal) : '');
   setBind('notice', '28 days');
   const initTotal = rent * 2;
   setBind('initTotal', initTotal ? String(initTotal) : '0');

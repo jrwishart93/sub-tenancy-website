@@ -602,9 +602,12 @@ $('btnGenerate')?.addEventListener('click', () => {
   subs.forEach((sub) => sub.sig?.persist());
   tenantSig?.persist();
   witnessSig?.persist();
-  const agreement = $('agreement');
-  if (agreement) {
-    window.scrollTo({ top: agreement.offsetTop - 8, behavior: 'smooth' });
+  const preview = $('preview');
+  if (preview) {
+    window.scrollTo({ top: preview.offsetTop - 8, behavior: 'smooth' });
+  }
+  if (typeof window.previewGlow === 'function') {
+    window.previewGlow();
   }
 });
 

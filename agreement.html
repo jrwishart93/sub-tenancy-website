@@ -25,7 +25,7 @@
     </div>
 
     <div class="grid" aria-label="Form sections">
-      <section class="card" aria-labelledby="section-details">
+      <section class="card" id="details" aria-labelledby="section-details">
         <h2 id="section-details">Parties and Tenancy Details</h2>
         <div class="hr"></div>
 
@@ -54,16 +54,18 @@
           </div>
         </div>
 
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-          <h3 style="margin:0;font-size:16px">Sub-Tenant(s)</h3>
-          <div class="actions">
-            <button class="btn ghost" id="btnAddSub" type="button">Add sub-tenant</button>
-            <button class="btn ghost" id="btnRemoveSub" type="button">Remove last</button>
+        <div id="subtenants">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <h3 style="margin:0;font-size:16px">Sub-Tenant(s)</h3>
+            <div class="actions">
+              <button class="btn ghost" id="btnAddSub" type="button">Add sub-tenant</button>
+              <button class="btn ghost" id="btnRemoveSub" type="button">Remove last</button>
+            </div>
           </div>
-        </div>
-        <span class="hint">You can have one or two people. The first sub-tenant is required; the second is optional.</span>
+          <span class="hint">You can have one or two people. The first sub-tenant is required; the second is optional.</span>
 
-        <div id="subsContainer"></div>
+          <div id="subsContainer"></div>
+        </div>
 
         <div class="row" style="margin-top:8px">
           <div>
@@ -84,7 +86,7 @@
         </div>
       </section>
 
-      <section class="card" aria-labelledby="section-signatures">
+      <section class="card" id="signatures" aria-labelledby="section-signatures">
         <h2 id="section-signatures">Signatures</h2>
         <div class="hr"></div>
         <p class="hint">Each sub-tenant gets their own signature pad. Draw slowly for quality or upload a PNG/JPG. Use “Stamp time” to add a UK timestamp.</p>
@@ -135,7 +137,7 @@
       </section>
     </div>
 
-    <section class="agreement" id="agreement" aria-label="Agreement Preview">
+    <section class="agreement" id="preview" aria-label="Agreement Preview">
       <h3>Sub-Tenancy Agreement for Room Rental</h3>
       <p><strong>Property:</strong> Flat 1, 61 Caledonian Crescent, Edinburgh</p>
       <div class="divider"></div>
@@ -252,6 +254,7 @@
     <small>Last updated: 8 November 2025</small>
   </footer>
 
+  <script src="/js/enhance.js" defer></script>
   <script src="js/agreement.js" type="module"></script>
 </body>
 </html>

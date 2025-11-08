@@ -58,6 +58,18 @@ a:focus {
   margin: 0 auto;
 }
 
+.header-logo {
+  display: block;
+  height: 56px;
+  width: auto;
+}
+
+@media (max-width: 640px) {
+  .header-logo {
+    height: 44px;
+  }
+}
+
 .header h1 {
   margin: 0 0 4px;
   font-size: 26px;

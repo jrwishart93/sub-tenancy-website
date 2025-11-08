@@ -105,6 +105,22 @@ const els = {
   signingSubs: $('signingSubs'),
 };
 
+const validateRentField = () => {
+  const rentValue = Number(els.rent?.value || 0);
+  showError(els.rent, els.errRent, !(rentValue >= 1));
+};
+
+els.agreeDate?.addEventListener('change', () => {
+  showError(els.agreeDate, els.errAgreeDate, !els.agreeDate?.value);
+});
+
+els.startDate?.addEventListener('change', () => {
+  showError(els.startDate, els.errStartDate, !els.startDate?.value);
+});
+
+els.rent?.addEventListener('input', validateRentField);
+els.rent?.addEventListener('blur', validateRentField);
+
 function showError(el, errEl, condition) {
   if (!errEl || !el) return true;
   if (condition) {
@@ -339,17 +355,14 @@ function renderSubs() {
 
   subs.forEach((sub, idx) => {
     const card = document.createElement('div');
-    card.className = 'card';
-    card.style.border = '1px dashed var(--line)';
-    card.style.padding = '12px';
-    card.style.marginTop = '8px';
+    card.className = 'card sub-card';
     card.innerHTML = `
-      <h4 style="margin:0 0 6px; font-size:16px">Sub-Tenant ${idx + 1}${idx === 0 ? ' (required)' : ''}</h4>
-      <label class="required">Full Name</label>
-      <input type="text" id="subName_${sub.index}" placeholder="Full legal name" aria-required="${idx === 0 ? 'true' : 'false'}">
+      <h4 class="sub-card__title">Sub-Tenant ${idx + 1}${idx === 0 ? ' (required)' : ''}</h4>
+      <label class="required" for="subName_${sub.index}">Full Name</label>
+      <input type="text" id="subName_${sub.index}" placeholder="Full legal name" aria-required="${idx === 0 ? 'true' : 'false'}" aria-describedby="errSubName_${sub.index}">
       <div id="errSubName_${sub.index}" class="error" role="alert">Please enter the sub-tenant’s full name.</div>
-      <label class="required">Current Address</label>
-      <textarea id="subAddr_${sub.index}" placeholder="Address" aria-required="${idx === 0 ? 'true' : 'false'}"></textarea>
+      <label class="required" for="subAddr_${sub.index}">Current Address</label>
+      <textarea id="subAddr_${sub.index}" placeholder="Address" aria-required="${idx === 0 ? 'true' : 'false'}" aria-describedby="errSubAddr_${sub.index}"></textarea>
       <div id="errSubAddr_${sub.index}" class="error" role="alert">Please enter the sub-tenant’s address.</div>
     `;
     els.subsContainer?.appendChild(card);
@@ -364,6 +377,7 @@ function renderSubs() {
         <span id="sigSubTime_${sub.index}" class="hint" aria-live="polite">No timestamp yet</span>
       </div>
       <div class="upload">
+        <label class="file-label" for="sigSubUpload_${sub.index}">Upload signature image</label>
         <input id="sigSubUpload_${sub.index}" type="file" accept="image/*">
         <span class="hint">Upload PNG or JPG</span>
       </div>

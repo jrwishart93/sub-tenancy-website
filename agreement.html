@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sub-Tenancy Agreement – Sub-Tenancy Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="header">
+  <h1>Sub-Tenancy Agreement</h1>
+</header>
+<main class="container agreement">
+  <form id="agreementForm" novalidate>
+    <section class="card">
+      <h2>Agreement Details</h2>
+      <div class="field">
+        <label>Property</label>
+        <span>Flat 1, 61 Caledonian Crescent, Edinburgh</span>
+      </div>
+      <div class="field">
+        <label>Lead tenant/occupier</label>
+        <span>David Martin</span>
+      </div>
+      <div class="field">
+        <label>Managing agent</label>
+        <span>Milard’s Property Management</span>
+      </div>
+      <div class="field">
+        <label for="agreementDate">Agreement date<span aria-hidden="true">*</span></label>
+        <input type="date" id="agreementDate" required />
+        <small class="error" id="agreementDateError"></small>
+      </div>
+      <div class="field">
+        <label for="startDate">Start date<span aria-hidden="true">*</span></label>
+        <input type="date" id="startDate" required />
+        <small class="error" id="startDateError"></small>
+      </div>
+      <div class="field">
+        <label for="rent">Monthly rent (£)<span aria-hidden="true">*</span></label>
+        <input type="number" id="rent" min="1" step="1" required />
+        <small class="error" id="rentError"></small>
+      </div>
+      <div class="field">
+        <label for="dueDay">Rent due day (1–28)<span aria-hidden="true">*</span></label>
+        <input type="number" id="dueDay" min="1" max="28" required />
+        <small class="error" id="dueDayError"></small>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Sub-tenants</h2>
+      <div id="subTenants">
+        <div class="sub-tenant" data-index="1">
+          <h3>Sub-tenant 1</h3>
+          <div class="field">
+            <label for="sub1Name">Full name<span aria-hidden="true">*</span></label>
+            <input type="text" id="sub1Name" required />
+            <small class="error" id="sub1NameError"></small>
+          </div>
+          <div class="field">
+            <label for="sub1Address">Address<span aria-hidden="true">*</span></label>
+            <input type="text" id="sub1Address" required />
+            <small class="error" id="sub1AddressError"></small>
+          </div>
+        </div>
+      </div>
+      <div class="buttons-row">
+        <button type="button" id="addSubTenant" class="btn-ghost">Add sub-tenant</button>
+        <button type="button" id="removeSubTenant" class="btn-ghost">Remove last</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Witness</h2>
+      <div class="field">
+        <label for="witnessName">Witness name (optional)</label>
+        <input type="text" id="witnessName" />
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Signatures</h2>
+      <div class="signature-group">
+        <h3>Sub-tenant 1</h3>
+        <canvas id="sigSub1" width="300" height="120" class="signature-canvas"></canvas>
+        <input type="file" id="sigSub1Upload" accept="image/png,image/jpeg" />
+        <div class="signature-actions">
+          <button type="button" data-target="sigSub1" class="btn-ghost clearSig">Clear</button>
+          <button type="button" data-target="sigSub1" class="btn-ghost stampSig">Stamp time</button>
+        </div>
+      </div>
+      <div id="sigSub2Container" class="signature-group" style="display:none;">
+        <h3>Sub-tenant 2</h3>
+        <canvas id="sigSub2" width="300" height="120" class="signature-canvas"></canvas>
+        <input type="file" id="sigSub2Upload" accept="image/png,image/jpeg" />
+        <div class="signature-actions">
+          <button type="button" data-target="sigSub2" class="btn-ghost clearSig">Clear</button>
+          <button type="button" data-target="sigSub2" class="btn-ghost stampSig">Stamp time</button>
+        </div>
+      </div>
+      <div class="signature-group">
+        <h3>Lead tenant</h3>
+        <canvas id="sigLead" width="300" height="120" class="signature-canvas"></canvas>
+        <input type="file" id="sigLeadUpload" accept="image/png,image/jpeg" />
+        <div class="signature-actions">
+          <button type="button" data-target="sigLead" class="btn-ghost clearSig">Clear</button>
+          <button type="button" data-target="sigLead" class="btn-ghost stampSig">Stamp time</button>
+        </div>
+      </div>
+      <div class="signature-group">
+        <h3>Witness (optional)</h3>
+        <canvas id="sigWitness" width="300" height="120" class="signature-canvas"></canvas>
+        <input type="file" id="sigWitnessUpload" accept="image/png,image/jpeg" />
+        <div class="signature-actions">
+          <button type="button" data-target="sigWitness" class="btn-ghost clearSig">Clear</button>
+          <button type="button" data-target="sigWitness" class="btn-ghost stampSig">Stamp time</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="preview">
+      <h2>Agreement Preview</h2>
+      <div id="previewContent"></div>
+    </section>
+
+    <div class="actions">
+      <button type="button" id="generateAgreement" class="btn-primary">Generate Agreement</button>
+      <button type="button" id="exportPdf" class="btn-primary">Export as PDF</button>
+      <a id="emailDavid" class="btn-primary" href="#">Email David</a>
+      <button type="button" id="clearForm" class="btn-ghost">Clear Form</button>
+      <button type="button" id="resetSignatures" class="btn-ghost">Reset Signatures</button>
+    </div>
+  </form>
+  <nav class="actions" style="margin-top:2rem;">
+    <a class="btn-link" href="index.html">Back to home</a>
+    <a class="btn-link" href="rules.html">View House Rules</a>
+  </nav>
+</main>
+<footer class="footer">
+  <small>Last updated: 8 November 2025</small>
+</footer>
+<script src="js/signature.js"></script>
+<script src="js/agreement.js"></script>
+</body>
+</html>

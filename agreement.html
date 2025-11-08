@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="public/css/glass.css">
   <link rel="icon" type="image/png" href="assets/favicon.png">
+  <script type="module" src="./js/firebase-init.js"></script>
 </head>
 <body id="top">
   <header class="header" role="banner">
@@ -33,7 +34,8 @@
         💡 Tip: Export as PDF from your browser’s print dialog, then click “Email David” to open a draft email.
       </div>
 
-      <div class="sections-grid" aria-label="Form sections">
+      <form id="agreementForm" novalidate>
+        <div class="sections-grid" aria-label="Form sections">
         <section id="details" class="card" aria-labelledby="section-details">
           <h2 id="section-details">Parties and Tenancy Details</h2>
           <div class="hr"></div>
@@ -76,7 +78,7 @@
           </div>
 
           <div class="toolbar">
-            <button class="btn primary" id="btnGenerate" type="button">Generate Agreement</button>
+            <button class="btn primary" id="btnGenerate" type="submit">Generate Agreement</button>
             <button class="btn" id="btnEmail" type="button">Email David</button>
             <button class="btn" id="btnClear" type="button">Clear Form</button>
           </div>
@@ -250,20 +252,21 @@
             </div>
           </div>
         </section>
-      </div>
+        </div>
 
-      <div class="toolbar toolbar-bottom">
-        <a class="btn link" id="btnScrollTop" href="#top">Back to form</a>
-        <button class="btn" id="btnEmailBottom" type="button">Email David</button>
-        <button class="btn primary" id="btnPrint2" type="button">Export as PDF</button>
-        <a class="btn" href="index.html">Home</a>
-      </div>
+        <div class="toolbar toolbar-bottom">
+          <a class="btn link" id="btnScrollTop" href="#top">Back to form</a>
+          <button class="btn" id="btnEmailBottom" type="button">Email David</button>
+          <button class="btn primary" id="btnPrint2" type="button">Export as PDF</button>
+          <a class="btn" href="index.html">Home</a>
+        </div>
 
-      <div class="actions-mobile" role="group" aria-label="Quick actions">
-        <button class="btn primary" type="button" onclick="handleGenerate()">Generate</button>
-        <button class="btn" type="button" onclick="handlePrint()">Export PDF</button>
-        <button class="btn" type="button" onclick="handleEmail()">Email David</button>
-      </div>
+        <div class="actions-mobile" role="group" aria-label="Quick actions">
+          <button class="btn primary" type="button" onclick="handleGenerate()">Generate</button>
+          <button class="btn" type="button" onclick="handlePrint()">Export PDF</button>
+          <button class="btn" type="button" onclick="handleEmail()">Email David</button>
+        </div>
+      </form>
     </div>
   </main>
 
@@ -271,6 +274,7 @@
     <small>Last updated: 8 November 2025</small>
   </footer>
 
+  <script type="module" src="./js/save-agreement.js"></script>
   <script src="js/agreement.js" type="module"></script>
 </body>
 </html>

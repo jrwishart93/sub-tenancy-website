@@ -151,11 +151,9 @@ textarea:focus {
 }
 
 .error {
+  display: none;
   font-size: 0.85rem;
-  color: #fff;
-  background-color: var(--danger);
-  padding: 6px 10px;
-  border-radius: var(--radius-md);
+  color: var(--danger);
   margin-top: 6px;
 }
 

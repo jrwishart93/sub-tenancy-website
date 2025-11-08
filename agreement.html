@@ -3,144 +3,254 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sub-Tenancy Agreement – Sub-Tenancy Portal</title>
+  <title>Sub-Tenancy Agreement — Flat 1, 61 Caledonian Crescent</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
-<body>
-<header class="header">
-  <h1>Sub-Tenancy Agreement</h1>
-</header>
-<main class="container agreement">
-  <form id="agreementForm" novalidate>
-    <section class="card">
-      <h2>Agreement Details</h2>
-      <div class="field">
-        <label>Property</label>
-        <span>Flat 1, 61 Caledonian Crescent, Edinburgh</span>
+<body id="top">
+  <header class="header" role="banner">
+    <div class="header-inner">
+      <div>
+        <h1>Sub-Tenancy Agreement</h1>
+        <p class="subtitle">Property: Flat 1, 61 Caledonian Crescent, Edinburgh • Lead tenant: David Martin • Managing agent: Milard’s Property Management</p>
       </div>
-      <div class="field">
-        <label>Lead tenant/occupier</label>
-        <span>David Martin</span>
-      </div>
-      <div class="field">
-        <label>Managing agent</label>
-        <span>Milard’s Property Management</span>
-      </div>
-      <div class="field">
-        <label for="agreementDate">Agreement date<span aria-hidden="true">*</span></label>
-        <input type="date" id="agreementDate" required />
-        <small class="error" id="agreementDateError"></small>
-      </div>
-      <div class="field">
-        <label for="startDate">Start date<span aria-hidden="true">*</span></label>
-        <input type="date" id="startDate" required />
-        <small class="error" id="startDateError"></small>
-      </div>
-      <div class="field">
-        <label for="rent">Monthly rent (£)<span aria-hidden="true">*</span></label>
-        <input type="number" id="rent" min="1" step="1" required />
-        <small class="error" id="rentError"></small>
-      </div>
-      <div class="field">
-        <label for="dueDay">Rent due day (1–28)<span aria-hidden="true">*</span></label>
-        <input type="number" id="dueDay" min="1" max="28" required />
-        <small class="error" id="dueDayError"></small>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>Sub-tenants</h2>
-      <div id="subTenants">
-        <div class="sub-tenant" data-index="1">
-          <h3>Sub-tenant 1</h3>
-          <div class="field">
-            <label for="sub1Name">Full name<span aria-hidden="true">*</span></label>
-            <input type="text" id="sub1Name" required />
-            <small class="error" id="sub1NameError"></small>
-          </div>
-          <div class="field">
-            <label for="sub1Address">Address<span aria-hidden="true">*</span></label>
-            <input type="text" id="sub1Address" required />
-            <small class="error" id="sub1AddressError"></small>
-          </div>
-        </div>
-      </div>
-      <div class="buttons-row">
-        <button type="button" id="addSubTenant" class="btn-ghost">Add sub-tenant</button>
-        <button type="button" id="removeSubTenant" class="btn-ghost">Remove last</button>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>Witness</h2>
-      <div class="field">
-        <label for="witnessName">Witness name (optional)</label>
-        <input type="text" id="witnessName" />
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>Signatures</h2>
-      <div class="signature-group">
-        <h3>Sub-tenant 1</h3>
-        <canvas id="sigSub1" width="300" height="120" class="signature-canvas"></canvas>
-        <input type="file" id="sigSub1Upload" accept="image/png,image/jpeg" />
-        <div class="signature-actions">
-          <button type="button" data-target="sigSub1" class="btn-ghost clearSig">Clear</button>
-          <button type="button" data-target="sigSub1" class="btn-ghost stampSig">Stamp time</button>
-        </div>
-      </div>
-      <div id="sigSub2Container" class="signature-group" style="display:none;">
-        <h3>Sub-tenant 2</h3>
-        <canvas id="sigSub2" width="300" height="120" class="signature-canvas"></canvas>
-        <input type="file" id="sigSub2Upload" accept="image/png,image/jpeg" />
-        <div class="signature-actions">
-          <button type="button" data-target="sigSub2" class="btn-ghost clearSig">Clear</button>
-          <button type="button" data-target="sigSub2" class="btn-ghost stampSig">Stamp time</button>
-        </div>
-      </div>
-      <div class="signature-group">
-        <h3>Lead tenant</h3>
-        <canvas id="sigLead" width="300" height="120" class="signature-canvas"></canvas>
-        <input type="file" id="sigLeadUpload" accept="image/png,image/jpeg" />
-        <div class="signature-actions">
-          <button type="button" data-target="sigLead" class="btn-ghost clearSig">Clear</button>
-          <button type="button" data-target="sigLead" class="btn-ghost stampSig">Stamp time</button>
-        </div>
-      </div>
-      <div class="signature-group">
-        <h3>Witness (optional)</h3>
-        <canvas id="sigWitness" width="300" height="120" class="signature-canvas"></canvas>
-        <input type="file" id="sigWitnessUpload" accept="image/png,image/jpeg" />
-        <div class="signature-actions">
-          <button type="button" data-target="sigWitness" class="btn-ghost clearSig">Clear</button>
-          <button type="button" data-target="sigWitness" class="btn-ghost stampSig">Stamp time</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="card" id="preview">
-      <h2>Agreement Preview</h2>
-      <div id="previewContent"></div>
-    </section>
-
-    <div class="actions">
-      <button type="button" id="generateAgreement" class="btn-primary">Generate Agreement</button>
-      <button type="button" id="exportPdf" class="btn-primary">Export as PDF</button>
-      <a id="emailDavid" class="btn-primary" href="#">Email David</a>
-      <button type="button" id="clearForm" class="btn-ghost">Clear Form</button>
-      <button type="button" id="resetSignatures" class="btn-ghost">Reset Signatures</button>
+      <span id="saveIndicator" class="save-indicator" aria-live="polite"></span>
     </div>
-  </form>
-  <nav class="actions" style="margin-top:2rem;">
-    <a class="btn-link" href="index.html">Back to home</a>
-    <a class="btn-link" href="rules.html">View House Rules</a>
-  </nav>
-</main>
-<footer class="footer">
-  <small>Last updated: 8 November 2025</small>
-</footer>
-<script src="js/signature.js"></script>
-<script src="js/agreement.js"></script>
+  </header>
+
+  <main class="container">
+    <div class="banner tip" role="note">
+      💡 Tip: Export as PDF from your browser’s print dialog, then click “Email David” to open a draft email.
+    </div>
+
+    <div class="grid" aria-label="Form sections">
+      <section class="card" aria-labelledby="section-details">
+        <h2 id="section-details">Parties and Tenancy Details</h2>
+        <div class="hr"></div>
+
+        <div class="row">
+          <div>
+            <label for="agreeDate" class="required">Date of Agreement</label>
+            <input id="agreeDate" type="date" aria-required="true">
+            <div id="errAgreeDate" class="error" role="alert">Please provide the agreement date.</div>
+          </div>
+          <div>
+            <label for="startDate" class="required">Start Date</label>
+            <input id="startDate" type="date" aria-required="true">
+            <div id="errStartDate" class="error" role="alert">Please provide a start date.</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="tenantName">Lead Tenant (fixed)</label>
+            <input id="tenantName" type="text" value="David Martin" readonly aria-readonly="true">
+            <span class="hint">This cannot be changed.</span>
+          </div>
+          <div>
+            <label for="agent">Managing Agent (fixed)</label>
+            <input id="agent" type="text" value="Milard’s Property Management" readonly aria-readonly="true">
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <h3 style="margin:0;font-size:16px">Sub-Tenant(s)</h3>
+          <div class="actions">
+            <button class="btn ghost" id="btnAddSub" type="button">Add sub-tenant</button>
+            <button class="btn ghost" id="btnRemoveSub" type="button">Remove last</button>
+          </div>
+        </div>
+        <span class="hint">You can have one or two people. The first sub-tenant is required; the second is optional.</span>
+
+        <div id="subsContainer"></div>
+
+        <div class="row" style="margin-top:8px">
+          <div>
+            <label for="rent" class="required">Monthly Rent (£)</label>
+            <input id="rent" type="number" value="750" min="0" step="1" aria-required="true">
+            <div id="errRent" class="error" role="alert">Rent must be at least £1.</div>
+          </div>
+          <div>
+            <label for="rentDay" class="required">Rent Due Day</label>
+            <select id="rentDay" aria-required="true"></select>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button class="btn primary" id="btnGenerate" type="button">Generate Agreement</button>
+          <button class="btn" id="btnEmail" type="button">Email David</button>
+          <button class="btn" id="btnClear" type="button">Clear Form</button>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="section-signatures">
+        <h2 id="section-signatures">Signatures</h2>
+        <div class="hr"></div>
+        <p class="hint">Each sub-tenant gets their own signature pad. Draw slowly for quality or upload a PNG/JPG. Use “Stamp time” to add a UK timestamp.</p>
+
+        <div id="sigContainer"></div>
+
+        <div class="hr"></div>
+
+        <div>
+          <label>Lead Tenant Signature (David Martin)</label>
+          <div class="sig-pad"><canvas id="sigTenant"></canvas></div>
+          <div class="sig-tools">
+            <button class="btn" id="sigTenantClear" type="button">Clear</button>
+            <button class="btn" id="sigTenantStamp" type="button">Stamp time</button>
+            <span id="sigTenantTime" class="hint" aria-live="polite">No timestamp yet</span>
+          </div>
+          <div class="upload">
+            <input id="sigTenantUpload" type="file" accept="image/*" aria-label="Upload lead tenant signature image">
+            <span class="hint">Upload PNG or JPG</span>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <div>
+            <label for="witName">Witness name (optional)</label>
+            <input id="witName" type="text">
+          </div>
+          <div>
+            <label>Witness Signature (optional)</label>
+            <div class="sig-pad"><canvas id="sigWitness"></canvas></div>
+            <div class="sig-tools">
+              <button class="btn" id="sigWitClear" type="button">Clear</button>
+              <button class="btn" id="sigWitStamp" type="button">Stamp time</button>
+              <span id="sigWitTime" class="hint" aria-live="polite">No timestamp yet</span>
+            </div>
+            <div class="upload">
+              <input id="sigWitUpload" type="file" accept="image/*" aria-label="Upload witness signature image">
+              <span class="hint">Upload PNG or JPG</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button class="btn primary" id="btnPrint" type="button">Export as PDF</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="agreement" id="agreement" aria-label="Agreement Preview">
+      <h3>Sub-Tenancy Agreement for Room Rental</h3>
+      <p><strong>Property:</strong> Flat 1, 61 Caledonian Crescent, Edinburgh</p>
+      <div class="divider"></div>
+
+      <p>This Sub-Tenancy Agreement (“the Agreement”) is made on <span data-bind="agreeDate">[Date]</span> between:</p>
+      <ol class="party-list">
+        <li><strong><span data-bind="tenantName">David Martin</span></strong> (“the Tenant” or “lead tenant”), the primary tenant and current occupier who rents the property from the landlord through <span data-bind="agent">Milard’s Property Management</span> and has written permission to sub-let one room in the property; and</li>
+        <li><strong><span data-bind="subTenant0">[Sub-Tenant Name]</span></strong> (“the Sub-Tenant”), of <span data-bind="subTenantAddr0">[Sub-Tenant Address]</span>.<br>
+            <span data-if="hasSub1"><strong><span data-bind="subTenant1">[Co-Sub-Tenant Name]</span></strong> (“the Co-Sub-Tenant”), of <span data-bind="subTenantAddr1">[Co-Sub-Tenant Address]</span>.</span>
+        </li>
+      </ol>
+      <p>Where a Co-Sub-Tenant resides with the Sub-Tenant, both individuals agree to comply with all terms of this Agreement and are jointly responsible for conduct, care of the property and any damage caused by them or their guests (fair wear and tear excepted).</p>
+
+      <h4>1. Property and Facilities</h4>
+      <p>The property is a two-bedroom ground-floor flat. The Sub-Tenant rents one private bedroom for exclusive use. Shared areas with the Tenant: kitchen, living room, shower/toilet and garden. Communal facilities include the central garden, heated pool, gym and sauna (access via factor fee included in rent).</p>
+
+      <h4>2. Term</h4>
+      <p>The Agreement begins on <span data-bind="startDate">[Start Date]</span> and continues monthly until ended under Section 12.</p>
+
+      <h4>3. Rent and Payments</h4>
+      <ul>
+        <li>Monthly rent: <strong>£<span data-bind="rent">750</span></strong> for the private room and shared/communal access.</li>
+        <li>Due on the <strong><span data-bind="rentDay">14</span></strong> of each month, payable to <span data-bind="tenantName">David Martin</span>. Standing order recommended.</li>
+        <li>The rent includes the factor fee for communal facilities and estate maintenance. The lead tenant continues to pay the full property rent to the landlord/agent.</li>
+        <li>If rent is unpaid when due, the Tenant may issue notice requiring payment or removal and may apply to court for payment or removal.</li>
+      </ul>
+
+      <h4>4. Initial Payments (in place of a deposit)</h4>
+      <p>The Sub-Tenant(s) pay the first and last month’s rent upfront (total £<span data-bind="initTotal">1500</span>) on signing. The last month’s rent is applied to the final month if the Agreement is complied with and the property is left in good condition (fair wear and tear accepted). Reasonable charges for damage, cleaning or unpaid utilities may be recovered with receipts or reasonable evidence.</p>
+
+      <h4>5. Utilities and Council Tax</h4>
+      <p>Electricity and council tax are split equally between the Tenant and the Sub-Tenant(s). These costs are additional to rent and must be paid promptly when billed.</p>
+
+      <h4>6. Access and Privacy</h4>
+      <p>The Tenant will not access a Sub-Tenant’s private room without consent and at least 24 hours’ notice, except in emergencies (e.g. fire, flood, gas leak). The Sub-Tenant(s) will permit reasonable access for safety checks and repairs with at least 24 hours’ notice (emergencies excepted).</p>
+
+      <h4>7. Inventory and Condition</h4>
+      <p>An inventory for the room and shared areas will be completed at the start. The Sub-Tenant(s) have 7 days to raise discrepancies. On leaving, the room and shared areas must be clean and undamaged (fair wear and tear accepted).</p>
+
+      <h4>8. House Rules</h4>
+      <ul>
+        <li>Be respectful towards the Tenant, neighbours and residents. No antisocial behaviour.</li>
+        <li>Keep shared areas tidy after use and dispose of rubbish/recycling correctly.</li>
+        <li>No large gatherings or parties; keep noise to reasonable levels, especially 22:00–07:00.</li>
+        <li>No illegal drugs or criminal behaviour on the premises.</li>
+        <li>No smoking or vaping inside the flat or common areas.</li>
+        <li>No pets without prior written consent from the Tenant.</li>
+        <li>Guests are permitted; please communicate plans to the Tenant in advance for awareness. No additional long-term occupiers without agreement.</li>
+        <li>Use the Wi-Fi/Internet for lawful purposes only. Do not download or share illegal or indecent content.</li>
+      </ul>
+
+      <h4>9. Repairs and Safety</h4>
+      <ul>
+        <li>Report maintenance issues promptly to the Tenant (David Martin). Do not contact the landlord or managing agent directly.</li>
+        <li>Do not tamper with smoke/heat alarms or safety devices. Report faults immediately.</li>
+      </ul>
+
+      <h4>10. Parking, Mail and Storage</h4>
+      <ul>
+        <li>Follow estate rules for parking, bike storage and communal spaces.</li>
+        <li>Do not obstruct fire exits, hallways or shared access.</li>
+        <li>Collect mail promptly; do not interfere with others’ mail.</li>
+      </ul>
+
+      <h4>11. Insurance</h4>
+      <p>Sub-Tenant(s) are responsible for insuring their personal belongings.</p>
+
+      <h4>12. Ending the Agreement</h4>
+      <ul>
+        <li>Either party may end this Agreement by giving at least <span data-bind="notice">28 days</span> written notice. 4–6 weeks’ notice preferred.</li>
+        <li>On leaving, return all keys/fobs and leave the room/shared areas clean and undamaged (fair wear and tear accepted).</li>
+      </ul>
+
+      <h4>13. Data Protection</h4>
+      <p>Basic contact and tenancy details will be held by the Tenant and shared with the landlord/agent only for legitimate tenancy purposes. Documents are stored securely and retained only as necessary.</p>
+
+      <h4>14. General</h4>
+      <p>This Agreement is the entire agreement and supersedes prior understandings. Changes must be in writing and signed. Governed by the law of Scotland. Parties will try to resolve disputes amicably before formal action.</p>
+
+      <div class="divider"></div>
+
+      <h4>Acceptance</h4>
+      <p>By signing below, the Sub-Tenant(s) confirm they have read and understood this Agreement, agree to pay £<span data-bind="initTotal">1500</span> upfront (first and last month’s rent), then £<span data-bind="rent">750</span> on the <span data-bind="rentDay">14</span> of each month, agree to split utilities and council tax equally, follow the house rules, and give the required notice.</p>
+
+      <div class="signing" id="signingSubs"></div>
+
+      <div class="signing">
+        <div class="sig-block">
+          <p><strong>Lead Tenant:</strong> <span data-bind="tenantName">David Martin</span></p>
+          <img id="imgTenant" class="sig-img" alt="Lead tenant signature">
+          <div class="sig-line"></div>
+          <div class="printed-name">Printed name: <span data-bind="tenantName">David Martin</span></div>
+          <p class="stamp">Signed and dated: <span id="stampTenant">[Signature and UK timestamp]</span></p>
+        </div>
+        <div class="sig-block">
+          <p><strong>Witness (optional):</strong> <span id="bindWitName">[Witness]</span></p>
+          <img id="imgWit" class="sig-img" alt="Witness signature">
+          <div class="sig-line"></div>
+          <div class="printed-name">Printed name: <span id="bindWitName2">[Witness]</span></div>
+          <p class="stamp">Signed and dated: <span id="stampWit">[Signature and UK timestamp]</span></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="toolbar" style="margin-top:12px">
+      <a class="btn link" id="btnScrollTop" href="#top">Back to form</a>
+      <button class="btn" id="btnEmailBottom" type="button">Email David</button>
+      <button class="btn primary" id="btnPrint2" type="button">Export as PDF</button>
+      <a class="btn" href="index.html">Home</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <small>Last updated: 8 November 2025</small>
+  </footer>
+
+  <script src="js/agreement.js" type="module"></script>
 </body>
 </html>

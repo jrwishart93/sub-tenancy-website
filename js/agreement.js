@@ -1,182 +1,665 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const STORAGE_KEY = 'property61_tenancy_v1';
-  // Form elements
-  const agreementDateEl = document.getElementById('agreement-date');
-  const startDateEl = document.getElementById('start-date');
-  const rentEl = document.getElementById('rent');
-  const dueDayEl = document.getElementById('due-day');
-  const tenant1NameEl = document.getElementById('tenant1-name');
-  const tenant1AddressEl = document.getElementById('tenant1-address');
-  const tenant2Section = document.getElementById('tenant2-section');
-  const tenant2NameEl = document.getElementById('tenant2-name');
-  const tenant2AddressEl = document.getElementById('tenant2-address');
-  const witnessEl = document.getElementById('witness-name');
-  const addTenantBtn = document.getElementById('add-tenant');
-  const removeTenantBtn = document.getElementById('remove-tenant');
-  const generateBtn = document.getElementById('generate');
-  const printBtn = document.getElementById('export-pdf');
-  const emailBtn = document.getElementById('email-david');
-  const clearBtn = document.getElementById('clear-form');
-  const resetSignaturesBtn = document.getElementById('reset-signatures');
-  const previewEl = document.getElementById('preview');
+const gbNow = () => new Date().toLocaleString('en-GB', { timeZone: 'Europe/London', hour12: false });
+const $ = (id) => document.getElementById(id);
 
-  // Initialize signature pads
-  const sig1 = initSignaturePad(document.getElementById('sig-tenant1'), { onChange: saveToStorage });
-  const sig2 = initSignaturePad(document.getElementById('sig-tenant2'), { onChange: saveToStorage });
-  const sigLead = initSignaturePad(document.getElementById('sig-lead'), { onChange: saveToStorage });
-  const sigWitness = initSignaturePad(document.getElementById('sig-witness'), { onChange: saveToStorage });
+const saveIndicator = $('saveIndicator');
 
-  // Set default dates
-  const today = new Date();
-  function formatDate(d) {
-    return d.toISOString().split('T')[0];
-  }
-  agreementDateEl.value = formatDate(today);
-  const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-  startDateEl.value = formatDate(nextWeek);
+const indicateSaved = () => {
+  if (!saveIndicator) return;
+  saveIndicator.textContent = 'Saved';
+  saveIndicator.setAttribute('data-state', 'saved');
+  window.setTimeout(() => {
+    saveIndicator.textContent = '';
+    saveIndicator.removeAttribute('data-state');
+  }, 1200);
+};
 
-  // Add/Remove co-sub-tenant
-  addTenantBtn.addEventListener('click', () => {
-    tenant2Section.style.display = '';
-    saveToStorage();
+const indicateError = () => {
+  if (!saveIndicator) return;
+  saveIndicator.textContent = 'Save failed';
+  saveIndicator.setAttribute('data-state', 'error');
+  window.setTimeout(() => {
+    saveIndicator.textContent = '';
+    saveIndicator.removeAttribute('data-state');
+  }, 1500);
+};
+
+const setBind = (key, val) => {
+  document.querySelectorAll(`[data-bind="${key}"]`).forEach((el) => {
+    el.textContent = val ?? '';
   });
-  removeTenantBtn.addEventListener('click', () => {
-    tenant2Section.style.display = 'none';
-    tenant2NameEl.value = '';
-    tenant2AddressEl.value = '';
-    sig2.clear();
-    saveToStorage();
+};
+
+const debounce = (fn, wait = 300) => {
+  let timer;
+  return function debounced(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), wait);
+  };
+};
+
+const FORM_KEY = 'tenancyForm_v3';
+const SIG_KEYS = {
+  tenant: 'sig_tenant',
+  witness: 'sig_witness',
+};
+const MAX_SUBS = 2;
+
+const rentDaySelect = $('rentDay');
+if (rentDaySelect) {
+  const options = Array.from({ length: 28 }, (_, i) => i + 1);
+  options.forEach((day) => {
+    const opt = document.createElement('option');
+    opt.value = String(day);
+    opt.textContent = String(day);
+    if (day === 14) opt.selected = true;
+    rentDaySelect.appendChild(opt);
   });
+}
 
-  function validate() {
-    const errors = {};
-    if (!agreementDateEl.value) errors.agreementDate = 'Required';
-    if (!startDateEl.value) errors.startDate = 'Required';
-    const rentVal = parseFloat(rentEl.value);
-    if (!(rentVal >= 1)) errors.rent = 'Enter valid rent';
-    const due = parseInt(dueDayEl.value, 10);
-    if (!(due >= 1 && due <= 28)) errors.dueDay = 'Due day must be 1-28';
-    if (!tenant1NameEl.value.trim()) errors.tenant1Name = 'Required';
-    if (!tenant1AddressEl.value.trim()) errors.tenant1Address = 'Required';
-    return errors;
+const today = new Date();
+const agreeDateInput = $('agreeDate');
+const startDateInput = $('startDate');
+if (agreeDateInput) {
+  agreeDateInput.value = today.toISOString().slice(0, 10);
+}
+if (startDateInput) {
+  const nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 7);
+  startDateInput.value = nextWeek.toISOString().slice(0, 10);
+}
+
+const els = {
+  agreeDate: $('agreeDate'),
+  startDate: $('startDate'),
+  tenantName: $('tenantName'),
+  agent: $('agent'),
+  rent: $('rent'),
+  rentDay: $('rentDay'),
+  witName: $('witName'),
+  imgTenant: $('imgTenant'),
+  imgWit: $('imgWit'),
+  stampTenant: $('stampTenant'),
+  stampWit: $('stampWit'),
+  errAgreeDate: $('errAgreeDate'),
+  errStartDate: $('errStartDate'),
+  errRent: $('errRent'),
+  subsContainer: $('subsContainer'),
+  sigContainer: $('sigContainer'),
+  signingSubs: $('signingSubs'),
+};
+
+function showError(el, errEl, condition) {
+  if (!errEl || !el) return true;
+  if (condition) {
+    errEl.style.display = 'block';
+    el.setAttribute('aria-invalid', 'true');
+    el.style.borderColor = 'var(--danger)';
+    return false;
+  }
+  errEl.style.display = 'none';
+  el.removeAttribute('aria-invalid');
+  el.style.borderColor = '';
+  return true;
+}
+
+function validateSubs(subs) {
+  if (!subs.length) return false;
+  const first = subs[0];
+  const nameEl = $(`subName_${first.index}`);
+  const addrEl = $(`subAddr_${first.index}`);
+  const v1 = showError(nameEl, $(`errSubName_${first.index}`), !nameEl?.value.trim());
+  const v2 = showError(addrEl, $(`errSubAddr_${first.index}`), !addrEl?.value.trim());
+  return v1 && v2;
+}
+
+function validateForm(subs) {
+  const rentValue = Number(els.rent?.value || 0);
+  const v1 = showError(els.agreeDate, els.errAgreeDate, !els.agreeDate?.value);
+  const v2 = showError(els.startDate, els.errStartDate, !els.startDate?.value);
+  const v3 = showError(els.rent, els.errRent, !(rentValue >= 1));
+  const v4 = validateSubs(subs);
+  return v1 && v2 && v3 && v4;
+}
+
+function createSignaturePad({ canvasId, timeSpanId, stampOutputId, storageKey, imgId }) {
+  const canvas = $(canvasId);
+  if (!canvas) return null;
+  const ctx = canvas.getContext('2d');
+  const timeEl = timeSpanId ? $(timeSpanId) : null;
+  const stampOut = stampOutputId ? $(stampOutputId) : null;
+  const imgEl = imgId ? $(imgId) : null;
+  let drawing = false;
+  let hasInk = false;
+  let last = { x: 0, y: 0 };
+
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    const heightCss = 160;
+    canvas.width = Math.floor(rect.width * ratio);
+    canvas.height = Math.floor(heightCss * ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#111';
+    ctx.clearRect(0, 0, rect.width, heightCss);
   }
 
-  function updatePreview() {
-    document.getElementById('prev-agreement-date').textContent = agreementDateEl.value;
-    document.getElementById('prev-start-date').textContent = startDateEl.value;
-    document.getElementById('prev-rent').textContent = rentEl.value;
-    document.getElementById('prev-due-day').textContent = dueDayEl.value;
-    document.getElementById('prev-tenant1-name').textContent = tenant1NameEl.value;
-    document.getElementById('prev-tenant1-address').textContent = tenant1AddressEl.value;
-    // tenant2 preview
-    if (tenant2Section.style.display !== 'none' && tenant2NameEl.value) {
-      document.getElementById('prev-tenant2').style.display = '';
-      document.getElementById('prev-tenant2-name').textContent = tenant2NameEl.value;
-      document.getElementById('prev-tenant2-address').textContent = tenant2AddressEl.value;
-    } else {
-      document.getElementById('prev-tenant2').style.display = 'none';
-    }
-    document.getElementById('prev-witness-name').textContent = witnessEl.value;
-    // signatures
-    document.getElementById('prev-sig-tenant1').src = sig1.toDataURL();
-    document.getElementById('prev-sig-tenant2').src = sig2.toDataURL();
-    document.getElementById('prev-sig-lead').src = sigLead.toDataURL();
-    document.getElementById('prev-sig-witness').src = sigWitness.toDataURL();
+  resize();
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(resize).observe(canvas);
+  } else {
+    window.addEventListener('resize', resize);
   }
 
-  function saveToStorage() {
-    const data = {
-      agreementDate: agreementDateEl.value,
-      startDate: startDateEl.value,
-      rent: rentEl.value,
-      dueDay: dueDayEl.value,
-      tenant1: { name: tenant1NameEl.value, address: tenant1AddressEl.value },
-      tenant2Visible: tenant2Section.style.display !== 'none',
-      tenant2: { name: tenant2NameEl.value, address: tenant2AddressEl.value },
-      witness: witnessEl.value,
-      sig1: sig1.toDataURL(),
-      sig2: sig2.toDataURL(),
-      sigLead: sigLead.toDataURL(),
-      sigWitness: sigWitness.toDataURL()
+  function pointerPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches?.[0];
+    const clientX = touch ? touch.clientX : e.clientX;
+    const clientY = touch ? touch.clientY : e.clientY;
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top,
     };
+  }
+
+  function start(e) {
+    e.preventDefault();
+    drawing = true;
+    hasInk = true;
+    last = pointerPos(e);
+  }
+
+  function move(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const { x, y } = pointerPos(e);
+    ctx.beginPath();
+    ctx.moveTo(last.x, last.y);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    last = { x, y };
+  }
+
+  function end() {
+    drawing = false;
+  }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove', move, { passive: false });
+  canvas.addEventListener('touchend', end, { passive: false });
+
+  function clearSig({ confirmClear = true, preserveStorage = false } = {}) {
+    if (confirmClear && hasInk && !window.confirm('Clear this signature?')) return;
+    const rect = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#111';
+    hasInk = false;
+    if (timeEl) timeEl.textContent = 'No timestamp yet';
+    if (stampOut) stampOut.textContent = '[Signature and UK timestamp]';
+    if (!preserveStorage) {
+      try {
+        localStorage.removeItem(storageKey);
+      } catch (e) {
+        // ignore
+      }
+    }
+    if (imgEl) {
+      imgEl.removeAttribute('src');
+      imgEl.style.display = 'none';
+    }
+    if (!preserveStorage) {
+      indicateSaved();
+    }
+  }
+
+  function stamp() {
+    const ts = gbNow();
+    if (timeEl) timeEl.textContent = `Signed ${ts} (UK)`;
+    if (stampOut) stampOut.textContent = `${ts} (UK)`;
+  }
+
+  function persist() {
+    if (!hasInk) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {}
+      const dataUrl = canvas.toDataURL('image/png');
+      localStorage.setItem(storageKey, dataUrl);
+      if (imgEl) {
+        imgEl.src = dataUrl;
+        imgEl.style.display = 'block';
+      }
+      indicateSaved();
+    } catch (e) {
+      indicateError();
+    }
   }
 
   function loadFromStorage() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
     try {
-      const data = JSON.parse(raw);
-      agreementDateEl.value = data.agreementDate || agreementDateEl.value;
-      startDateEl.value = data.startDate || startDateEl.value;
-      rentEl.value = data.rent || rentEl.value;
-      dueDayEl.value = data.dueDay || dueDayEl.value;
-      if (data.tenant1) {
-        tenant1NameEl.value = data.tenant1.name || '';
-        tenant1AddressEl.value = data.tenant1.address || '';
-      }
-      if (data.tenant2Visible) {
-        tenant2Section.style.display = '';
-        tenant2NameEl.value = data.tenant2?.name || '';
-        tenant2AddressEl.value = data.tenant2?.address || '';
-      } else {
-        tenant2Section.style.display = 'none';
-      }
-      witnessEl.value = data.witness || '';
-      if (data.sig1) sig1.setImage(data.sig1);
-      if (data.sig2) sig2.setImage(data.sig2);
-      if (data.sigLead) sigLead.setImage(data.sigLead);
-      if (data.sigWitness) sigWitness.setImage(data.sigWitness);
-    } catch (e) {}
+      const stored = localStorage.getItem(storageKey);
+      if (!stored) return;
+      const image = new Image();
+      image.onload = () => {
+        clearSig({ confirmClear: false, preserveStorage: true });
+        ctx.drawImage(image, 0, 0, canvas.width / ratio, canvas.height / ratio);
+        hasInk = true;
+        if (imgEl) {
+          imgEl.src = stored;
+          imgEl.style.display = 'block';
+        }
+      };
+      image.src = stored;
+    } catch (e) {
+      // ignore
+    }
   }
 
-  [agreementDateEl, startDateEl, rentEl, dueDayEl, tenant1NameEl, tenant1AddressEl, tenant2NameEl, tenant2AddressEl, witnessEl].forEach(el => {
-    el.addEventListener('input', saveToStorage);
+  function applyToImage() {
+    if (!hasInk || !imgEl) return;
+    imgEl.src = canvas.toDataURL('image/png');
+    imgEl.style.display = 'block';
+  }
+
+  return {
+    canvas,
+    clearSig,
+    stamp,
+    persist,
+    loadFromStorage,
+    applyToImage,
+    get hasInk() {
+      return hasInk;
+    },
+  };
+}
+
+function handleUpload(inputEl, imgEl, storageKey) {
+  if (!inputEl || !imgEl) return;
+  inputEl.addEventListener('change', () => {
+    const file = inputEl.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== 'string') return;
+      imgEl.src = reader.result;
+      imgEl.style.display = 'block';
+      try {
+        localStorage.setItem(storageKey, reader.result);
+        indicateSaved();
+      } catch (e) {
+        indicateError();
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+let subs = [];
+
+function newSub(index) {
+  return {
+    index,
+    name: '',
+    addr: '',
+    sigKey: `sig_sub_${index}`,
+    tsId: `stampSub${index}`,
+  };
+}
+
+function renderSubs() {
+  if (!subs.length) subs.push(newSub(0));
+  if (subs.length > MAX_SUBS) subs = subs.slice(0, MAX_SUBS);
+
+  if (els.subsContainer) els.subsContainer.innerHTML = '';
+  if (els.sigContainer) els.sigContainer.innerHTML = '';
+  if (els.signingSubs) els.signingSubs.innerHTML = '';
+
+  subs.forEach((sub, idx) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.border = '1px dashed var(--line)';
+    card.style.padding = '12px';
+    card.style.marginTop = '8px';
+    card.innerHTML = `
+      <h4 style="margin:0 0 6px; font-size:16px">Sub-Tenant ${idx + 1}${idx === 0 ? ' (required)' : ''}</h4>
+      <label class="required">Full Name</label>
+      <input type="text" id="subName_${sub.index}" placeholder="Full legal name" aria-required="${idx === 0 ? 'true' : 'false'}">
+      <div id="errSubName_${sub.index}" class="error" role="alert">Please enter the sub-tenant’s full name.</div>
+      <label class="required">Current Address</label>
+      <textarea id="subAddr_${sub.index}" placeholder="Address" aria-required="${idx === 0 ? 'true' : 'false'}"></textarea>
+      <div id="errSubAddr_${sub.index}" class="error" role="alert">Please enter the sub-tenant’s address.</div>
+    `;
+    els.subsContainer?.appendChild(card);
+
+    const sigWrapper = document.createElement('div');
+    sigWrapper.innerHTML = `
+      <label>Sub-Tenant ${idx + 1} Signature</label>
+      <div class="sig-pad"><canvas id="sigSub_${sub.index}"></canvas></div>
+      <div class="sig-tools">
+        <button class="btn" id="sigSubClear_${sub.index}" type="button">Clear</button>
+        <button class="btn" id="sigSubStamp_${sub.index}" type="button">Stamp time</button>
+        <span id="sigSubTime_${sub.index}" class="hint" aria-live="polite">No timestamp yet</span>
+      </div>
+      <div class="upload">
+        <input id="sigSubUpload_${sub.index}" type="file" accept="image/*">
+        <span class="hint">Upload PNG or JPG</span>
+      </div>
+      <div class="hr"></div>
+    `;
+    els.sigContainer?.appendChild(sigWrapper);
+
+    const signing = document.createElement('div');
+    signing.className = 'sig-block';
+    signing.innerHTML = `
+      <p><strong>${idx === 0 ? 'Sub-Tenant' : 'Co-Sub-Tenant'}:</strong> <span data-bind="subTenant${idx}">[Name]</span></p>
+      <img id="imgSub_${sub.index}" class="sig-img" alt="Sub-Tenant signature ${idx + 1}">
+      <div class="sig-line"></div>
+      <div class="printed-name">Printed name: <span data-bind="subTenant${idx}">[Name]</span></div>
+      <p class="stamp">Signed and dated: <span id="${sub.tsId}">[Signature and UK timestamp]</span></p>
+    `;
+    els.signingSubs?.appendChild(signing);
   });
 
-  generateBtn.addEventListener('click', () => {
-    const errors = validate();
-    if (Object.keys(errors).length) {
-      alert('Please fill all required fields correctly');
+  subs.forEach((sub, idx) => {
+    const nameField = $(`subName_${sub.index}`);
+    const addrField = $(`subAddr_${sub.index}`);
+    if (nameField) nameField.value = sub.name || '';
+    if (addrField) addrField.value = sub.addr || '';
+
+    const save = debounce(saveForm, 500);
+    nameField?.addEventListener('input', save);
+    addrField?.addEventListener('input', save);
+
+    nameField?.addEventListener('blur', () => {
+      if (idx === 0) showError(nameField, $(`errSubName_${sub.index}`), !nameField.value.trim());
+    });
+    addrField?.addEventListener('blur', () => {
+      if (idx === 0) showError(addrField, $(`errSubAddr_${sub.index}`), !addrField.value.trim());
+    });
+  });
+
+  subs.forEach((sub) => {
+    sub.sig = createSignaturePad({
+      canvasId: `sigSub_${sub.index}`,
+      timeSpanId: `sigSubTime_${sub.index}`,
+      stampOutputId: sub.tsId,
+      storageKey: sub.sigKey,
+      imgId: `imgSub_${sub.index}`,
+    });
+    $(`sigSubClear_${sub.index}`)?.addEventListener('click', () => sub.sig?.clearSig());
+    $(`sigSubStamp_${sub.index}`)?.addEventListener('click', () => sub.sig?.stamp());
+    handleUpload($(`sigSubUpload_${sub.index}`), $(`imgSub_${sub.index}`), sub.sigKey);
+    sub.sig?.loadFromStorage();
+  });
+}
+
+function saveForm() {
+  try {
+    subs.forEach((sub) => {
+      sub.name = $(`subName_${sub.index}`)?.value || '';
+      sub.addr = $(`subAddr_${sub.index}`)?.value || '';
+    });
+    const data = {
+      agreeDate: els.agreeDate?.value,
+      startDate: els.startDate?.value,
+      rent: els.rent?.value,
+      rentDay: els.rentDay?.value,
+      witName: els.witName?.value,
+      subs: subs.map((sub) => ({
+        index: sub.index,
+        name: $(`subName_${sub.index}`)?.value || '',
+        addr: $(`subAddr_${sub.index}`)?.value || '',
+        sigKey: sub.sigKey,
+        tsId: sub.tsId,
+      })),
+    };
+    localStorage.setItem(FORM_KEY, JSON.stringify(data));
+    indicateSaved();
+  } catch (e) {
+    indicateError();
+  }
+}
+
+function loadForm() {
+  try {
+    const raw = localStorage.getItem(FORM_KEY);
+    if (!raw) {
+      subs = [newSub(0)];
+      renderSubs();
       return;
     }
-    updatePreview();
-    saveToStorage();
-    previewEl.scrollIntoView({ behavior: 'smooth' });
+    const data = JSON.parse(raw);
+    subs = Array.isArray(data.subs) && data.subs.length
+      ? data.subs.map((s, idx) => ({
+        index: typeof s.index === 'number' ? s.index : idx,
+        name: s.name || '',
+        addr: s.addr || '',
+        sigKey: s.sigKey || `sig_sub_${idx}`,
+        tsId: s.tsId || `stampSub${idx}`,
+      }))
+      : [newSub(0)];
+    renderSubs();
+    if (data.agreeDate && els.agreeDate) els.agreeDate.value = data.agreeDate;
+    if (data.startDate && els.startDate) els.startDate.value = data.startDate;
+    if (data.rent && els.rent) els.rent.value = data.rent;
+    if (data.rentDay && els.rentDay) els.rentDay.value = data.rentDay;
+    if (data.witName && els.witName) els.witName.value = data.witName;
+    subs.forEach((sub) => {
+      const nameField = $(`subName_${sub.index}`);
+      const addrField = $(`subAddr_${sub.index}`);
+      if (nameField) nameField.value = sub.name || '';
+      if (addrField) addrField.value = sub.addr || '';
+    });
+  } catch (e) {
+    subs = [newSub(0)];
+    renderSubs();
+  }
+}
+
+function bindAgreement() {
+  const agreeDate = els.agreeDate?.value ? new Date(els.agreeDate.value).toLocaleDateString('en-GB') : '';
+  setBind('agreeDate', agreeDate);
+  const startDate = els.startDate?.value ? new Date(els.startDate.value).toLocaleDateString('en-GB') : '';
+  setBind('startDate', startDate);
+  setBind('tenantName', els.tenantName?.value || '');
+  setBind('agent', els.agent?.value || '');
+  const rent = Number(els.rent?.value || 0);
+  setBind('rent', rent ? String(rent) : '0');
+  setBind('rentDay', els.rentDay?.value || '');
+  setBind('notice', '28 days');
+  const initTotal = rent * 2;
+  setBind('initTotal', initTotal ? String(initTotal) : '0');
+
+  subs.forEach((sub, idx) => {
+    const nameValue = $(`subName_${sub.index}`)?.value.trim() || `[Sub-Tenant ${idx + 1}]`;
+    const addrValue = $(`subAddr_${sub.index}`)?.value.trim() || `[Address ${idx + 1}]`;
+    setBind(`subTenant${idx}`, nameValue);
+    setBind(`subTenantAddr${idx}`, addrValue);
   });
 
-  printBtn.addEventListener('click', () => {
-    updatePreview();
-    window.print();
+  document.querySelectorAll('[data-if="hasSub1"]').forEach((el) => {
+    el.style.display = subs.length > 1 ? 'inline' : 'none';
   });
 
-  emailBtn.addEventListener('click', () => {
-    const names = [tenant1NameEl.value];
-    if (tenant2Section.style.display !== 'none' && tenant2NameEl.value) names.push(tenant2NameEl.value);
-    const subject = 'Sub-Tenancy Agreement — ' + names.join(' & ');
-    let body = '';
-    body += 'Agreement Date: ' + agreementDateEl.value + '\n';
-    body += 'Start Date: ' + startDateEl.value + '\n';
-    body += 'Rent: £' + rentEl.value + '\n';
-    body += 'Due Day: ' + dueDayEl.value + '\n';
-    const mailto = 'mailto:david.martin.1296@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-    window.location.href = mailto;
-  });
+  const witnessName = els.witName?.value.trim() || '[Witness]';
+  $('bindWitName').textContent = witnessName;
+  $('bindWitName2').textContent = witnessName;
+}
 
-  clearBtn.addEventListener('click', () => {
-    localStorage.removeItem(STORAGE_KEY);
-    location.reload();
+function prepareForPrint() {
+  subs.forEach((sub) => {
+    const img = $(`imgSub_${sub.index}`);
+    sub.sig?.applyToImage();
+    if (!sub.sig?.hasInk && img) {
+      img.style.display = 'none';
+    }
   });
+  tenantSig?.applyToImage();
+  witnessSig?.applyToImage();
+}
 
-  resetSignaturesBtn.addEventListener('click', () => {
-    sig1.clear();
-    sig2.clear();
-    sigLead.clear();
-    sigWitness.clear();
-    saveToStorage();
+function emailDavid() {
+  const names = subs.map((sub, idx) => {
+    const name = $(`subName_${sub.index}`)?.value.trim();
+    return name || `Sub-Tenant ${idx + 1}`;
+  }).join(' & ');
+  const subject = encodeURIComponent(`Sub-Tenancy Agreement — ${names}`);
+  const body = encodeURIComponent(
+`Hi David,
+
+The sub-tenancy agreement is completed for ${names}.
+Start Date: ${els.startDate?.value || '[date]'}
+Monthly Rent: £${els.rent?.value || '750'}
+Due Day: ${els.rentDay?.value || '14'}
+
+I’ve attached the PDF (or will send it next).
+
+Thanks.`
+  );
+  window.location.href = `mailto:david.martin.1296@gmail.com?subject=${subject}&body=${body}`;
+}
+
+function clearForm() {
+  if (!window.confirm('Clear all form fields (signatures are kept unless you clear them individually)?')) return;
+  try {
+    localStorage.removeItem(FORM_KEY);
+  } catch (e) {
+    // ignore
+  }
+  const nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 7);
+  if (els.agreeDate) els.agreeDate.value = today.toISOString().slice(0, 10);
+  if (els.startDate) els.startDate.value = nextWeek.toISOString().slice(0, 10);
+  if (els.rent) els.rent.value = '750';
+  if (els.rentDay) els.rentDay.value = '14';
+  if (els.witName) els.witName.value = '';
+  subs = [newSub(0)];
+  renderSubs();
+  bindAgreement();
+}
+
+function scrollToTop(e) {
+  if (e) e.preventDefault();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+['agreeDate', 'startDate', 'rent', 'rentDay', 'witName'].forEach((id) => {
+  const el = $(id);
+  if (!el) return;
+  el.addEventListener('input', debounce(saveForm, 500));
+  el.addEventListener('blur', saveForm);
+  if (el.tagName === 'SELECT') {
+    el.addEventListener('change', saveForm);
+  }
+});
+
+if (els.witName) {
+  els.witName.addEventListener('input', () => {
+    const witness = els.witName.value.trim() || '[Witness]';
+    $('bindWitName').textContent = witness;
+    $('bindWitName2').textContent = witness;
   });
+}
 
-  loadFromStorage();
+loadForm();
+bindAgreement();
+
+$('btnAddSub')?.addEventListener('click', () => {
+  if (subs.length >= MAX_SUBS) {
+    window.alert('You can add up to two sub-tenants.');
+    return;
+  }
+  const sub = newSub(subs.length ? subs[subs.length - 1].index + 1 : 0);
+  subs.push(sub);
+  renderSubs();
+  saveForm();
+});
+
+$('btnRemoveSub')?.addEventListener('click', () => {
+  if (subs.length <= 1) {
+    window.alert('At least one sub-tenant is required.');
+    return;
+  }
+  const removed = subs.pop();
+  try {
+    localStorage.removeItem(removed.sigKey);
+  } catch (e) {
+    // ignore
+  }
+  renderSubs();
+  saveForm();
+});
+
+$('btnGenerate')?.addEventListener('click', () => {
+  if (!validateForm(subs)) return;
+  bindAgreement();
+  subs.forEach((sub) => sub.sig?.persist());
+  tenantSig?.persist();
+  witnessSig?.persist();
+  const agreement = $('agreement');
+  if (agreement) {
+    window.scrollTo({ top: agreement.offsetTop - 8, behavior: 'smooth' });
+  }
+});
+
+$('btnPrint')?.addEventListener('click', () => {
+  bindAgreement();
+  prepareForPrint();
+  window.print();
+});
+$('btnPrint2')?.addEventListener('click', () => {
+  bindAgreement();
+  prepareForPrint();
+  window.print();
+});
+
+$('btnEmail')?.addEventListener('click', emailDavid);
+$('btnEmailBottom')?.addEventListener('click', emailDavid);
+$('btnClear')?.addEventListener('click', clearForm);
+$('btnScrollTop')?.addEventListener('click', scrollToTop);
+
+const tenantSig = createSignaturePad({
+  canvasId: 'sigTenant',
+  timeSpanId: 'sigTenantTime',
+  stampOutputId: 'stampTenant',
+  storageKey: SIG_KEYS.tenant,
+  imgId: 'imgTenant',
+});
+const witnessSig = createSignaturePad({
+  canvasId: 'sigWitness',
+  timeSpanId: 'sigWitTime',
+  stampOutputId: 'stampWit',
+  storageKey: SIG_KEYS.witness,
+  imgId: 'imgWit',
+});
+
+tenantSig?.loadFromStorage();
+witnessSig?.loadFromStorage();
+
+$('sigTenantClear')?.addEventListener('click', () => tenantSig?.clearSig());
+$('sigTenantStamp')?.addEventListener('click', () => tenantSig?.stamp());
+$('sigWitClear')?.addEventListener('click', () => witnessSig?.clearSig());
+$('sigWitStamp')?.addEventListener('click', () => witnessSig?.stamp());
+
+handleUpload($('sigTenantUpload'), els.imgTenant, SIG_KEYS.tenant);
+handleUpload($('sigWitUpload'), els.imgWit, SIG_KEYS.witness);
+
+window.addEventListener('beforeprint', () => {
+  bindAgreement();
+  prepareForPrint();
+});
+
+window.addEventListener('afterprint', () => {
+  subs.forEach((sub) => {
+    const img = $(`imgSub_${sub.index}`);
+    if (img && !sub.sig?.hasInk) {
+      img.style.display = 'none';
+    }
+  });
 });

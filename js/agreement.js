@@ -602,9 +602,9 @@ $('btnGenerate')?.addEventListener('click', () => {
   subs.forEach((sub) => sub.sig?.persist());
   tenantSig?.persist();
   witnessSig?.persist();
-  const agreement = $('agreement');
-  if (agreement) {
-    window.scrollTo({ top: agreement.offsetTop - 8, behavior: 'smooth' });
+  const preview = $('preview');
+  if (preview) {
+    window.scrollTo({ top: preview.offsetTop - 8, behavior: 'smooth' });
   }
 });
 
@@ -663,3 +663,59 @@ window.addEventListener('afterprint', () => {
     }
   });
 });
+
+const navLinks = Array.from(document.querySelectorAll('.glass-nav a'));
+const navTargets = navLinks
+  .map((link) => {
+    const hash = link.getAttribute('href');
+    if (!hash || !hash.startsWith('#')) return null;
+    const id = hash.slice(1);
+    const section = document.getElementById(id);
+    if (!section) return null;
+    return { link, section };
+  })
+  .filter(Boolean);
+
+if (navTargets.length) {
+  const setActiveNav = () => {
+    const scrollPos = window.scrollY + 120;
+    let activeId = navTargets[0].section.id;
+    navTargets.forEach(({ section }) => {
+      if (section.offsetTop <= scrollPos) {
+        activeId = section.id;
+      }
+    });
+    navTargets.forEach(({ link, section }) => {
+      if (section.id === activeId) {
+        link.setAttribute('aria-current', 'true');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  };
+
+  const debouncedSetActive = debounce(setActiveNav, 100);
+  window.addEventListener('scroll', debouncedSetActive, { passive: true });
+  window.addEventListener('resize', debouncedSetActive);
+  navLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      navLinks.forEach((lnk) => lnk.removeAttribute('aria-current'));
+      link.setAttribute('aria-current', 'true');
+    });
+  });
+  setActiveNav();
+}
+
+window.handleGenerate = () => {
+  $('btnGenerate')?.click();
+};
+
+window.handlePrint = () => {
+  const printButton = $('btnPrint') || $('btnPrint2');
+  printButton?.click();
+};
+
+window.handleEmail = () => {
+  const emailButton = $('btnEmail') || $('btnEmailBottom');
+  emailButton?.click();
+};

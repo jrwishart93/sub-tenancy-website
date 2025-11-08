@@ -10,10 +10,12 @@
   <script type="module" src="./js/firebase-init.js"></script>
 </head>
 <body id="top">
-  <header class="header" role="banner">
-    <div class="header-inner">
-      <img class="header-logo" src="assets/front61.png" alt="Sub-Tenancy Portal logo">
-      <div style="flex:1 1 auto;">
+  <header class="page-header" role="banner">
+    <div class="page-header__inner">
+      <a class="page-header__logo" href="index.html" aria-label="Return to sub-tenancy home">
+        <img src="assets/front61.png" alt="Number 61 front door logo" class="header-logo">
+      </a>
+      <div class="page-header__titles" style="flex:1 1 auto;">
         <h1>Sub-Tenancy Agreement</h1>
         <p class="subtitle">Property: Flat 1, 61 Caledonian Crescent, Edinburgh • Lead tenant: David Martin • Managing agent: Milard’s Property Management</p>
       </div>
@@ -22,7 +24,7 @@
   </header>
 
   <main>
-    <div class="container">
+    <div class="page-container">
       <nav class="glass-nav" aria-label="Agreement navigation">
         <a href="#details" aria-current="true">Details</a>
         <a href="#subtenants">Sub-tenants</a>
@@ -270,7 +272,7 @@
     </div>
   </main>
 
-  <footer class="footer">
+  <footer class="page-footer">
     <small>Last updated: 8 November 2025</small>
   </footer>
 

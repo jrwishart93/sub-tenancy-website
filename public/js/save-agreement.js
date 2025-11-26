@@ -14,7 +14,7 @@ const DAVID_SIGNATURE_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(
 )}
 `;
 
-const DAVID_SIGNATURE_TIMESTAMP = "Signed on 14 November 2024 (UK time)";
+const DAVID_SIGNATURE_TIMESTAMP = "Signed on 26 November 2025 (UK time)";
 
 const getInputValue = (id) => {
   const el = document.getElementById(id);
@@ -88,12 +88,9 @@ const buildPayload = () => {
     rent,
     rentDueDay,
     deposit,
-    witnessName: getInputValue("witName"),
     agreedTerms: getCheckboxValue("agreeCheck"),
     signedByTenant: leadSignature,
     tenantSignatureTimestamp: leadTimestamp,
-    witnessSignature: getCanvasData("sigWitness"),
-    witnessSignatureTimestamp: getInputValue("stampWit"),
     subTenants: collectSubTenants(),
     timestamp: serverTimestamp(),
   };

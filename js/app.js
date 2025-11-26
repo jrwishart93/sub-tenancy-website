@@ -2,7 +2,6 @@ const FORM_STORAGE_KEY = 'tenancy_form_v1';
 const SIGNATURE_KEYS = {
   sigSub0: 'sig_sub_0',
   sigTenant: 'sig_tenant',
-  sigWitness: 'sig_witness',
 };
 
 const saveIndicator = document.getElementById('saveIndicator');
@@ -109,7 +108,6 @@ const fieldIds = {
   subTenantName: 'subTenantName',
   subTenantEmail: 'subTenantEmail',
   subTenantAddress: 'subTenantAddress',
-  witnessName: 'witnessName',
   agreeTerms: 'agreeTerms',
 };
 
@@ -137,7 +135,6 @@ const collectFormData = () => {
   const subTenantName = fieldElements.subTenantName?.value?.trim() ?? '';
   const subTenantEmail = fieldElements.subTenantEmail?.value?.trim() ?? '';
   const subTenantAddress = fieldElements.subTenantAddress?.value?.trim() ?? '';
-  const witnessName = fieldElements.witnessName?.value?.trim() ?? '';
   const agreeTerms = Boolean(fieldElements.agreeTerms?.checked);
 
   return {
@@ -147,7 +144,6 @@ const collectFormData = () => {
     subTenantName,
     subTenantEmail,
     subTenantAddress,
-    witnessName,
     agreeTerms,
   };
 };
@@ -355,9 +351,6 @@ const applyStoredForm = () => {
   if (fieldElements.subTenantAddress && stored.subTenantAddress) {
     fieldElements.subTenantAddress.value = stored.subTenantAddress;
   }
-  if (fieldElements.witnessName && stored.witnessName) {
-    fieldElements.witnessName.value = stored.witnessName;
-  }
   if (fieldElements.agreeTerms) {
     fieldElements.agreeTerms.checked = Boolean(stored.agreeTerms);
   }
@@ -377,7 +370,7 @@ const DAVID_SIGNATURE_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(
 )}
 `;
 
-const DAVID_SIGNATURE_TIMESTAMP = 'Signed on 14 November 2024 (UK time)';
+const DAVID_SIGNATURE_TIMESTAMP = 'Signed on 26 November 2025 (UK time)';
 
 signatureStates.sigTenant = {
   image: DAVID_SIGNATURE_IMAGE,
@@ -432,7 +425,6 @@ const updateSignaturePreview = () => {
   const bindings = {
     sigSub0Stamp: signatureStates.sigSub0?.timestamp || '[Signature and UK timestamp]',
     sigTenantStamp: signatureStates.sigTenant?.timestamp || '[Signature and UK timestamp]',
-    sigWitnessStamp: signatureStates.sigWitness?.timestamp || '[Signature and UK timestamp]',
   };
   document.querySelectorAll('[data-bind]').forEach((node) => {
     const key = node.dataset.bind;
@@ -633,7 +625,7 @@ const initSignaturePad = (id) => {
   signatureStates[id] = state;
 };
 
-['sigSub0', 'sigWitness'].forEach(initSignaturePad);
+['sigSub0'].forEach(initSignaturePad);
 
 const exportButton = document.getElementById('exportPdf');
 const previewContainer = document.getElementById('preview');
@@ -645,10 +637,8 @@ const updatePreview = (data = currentFormData) => {
     rentDueDayOrdinal: data.rentDueDay ? ordinal(data.rentDueDay) : '[Due Day]',
     subTenantName: data.subTenantName || '[Sub-Tenant full name]',
     subTenantAddress: data.subTenantAddress || '[Sub-Tenant address]',
-    witnessName: data.witnessName || '[Witness name]',
     sigSub0Stamp: signatureStates.sigSub0?.timestamp || '[Signature and UK timestamp]',
     sigTenantStamp: signatureStates.sigTenant?.timestamp || '[Signature and UK timestamp]',
-    sigWitnessStamp: signatureStates.sigWitness?.timestamp || '[Signature and UK timestamp]',
   };
 
   document.querySelectorAll('[data-bind]').forEach((node) => {

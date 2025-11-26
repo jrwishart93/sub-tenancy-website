@@ -338,6 +338,14 @@ a:hover {
   padding: var(--space-4) var(--space-3) var(--space-5);
 }
 
+.utility-actions {
+  max-width: var(--container-width);
+  margin: 0 auto var(--space-3);
+  padding: 0 var(--space-3);
+  display: flex;
+  justify-content: flex-end;
+}
+
 .tab-panel {
   margin-bottom: var(--space-5);
 }
@@ -516,6 +524,20 @@ button,
 .btn.primary {
   background: #2563eb;
   color: #ffffff;
+}
+
+.btn-subtle {
+  background: transparent;
+  color: var(--colour-muted);
+  border: 1px dashed var(--colour-border);
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+
+.btn-subtle:hover,
+.btn-subtle:focus-visible {
+  background: #eef2f7;
+  color: #111827;
 }
 
 .btn-muted,

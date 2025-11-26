@@ -329,7 +329,7 @@ const applyStoredForm = () => {
     fieldElements.agreementDate.value = defaultAgreement;
   }
   if (fieldElements.startDate && !fieldElements.startDate.value) {
-    fieldElements.startDate.value = '2025-11-14';
+    fieldElements.startDate.value = '2025-11-29';
   }
   if (fieldElements.rentDueDay && !fieldElements.rentDueDay.value) {
     fieldElements.rentDueDay.value = '1';

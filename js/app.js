@@ -125,6 +125,7 @@ const errorElements = {
   startDate: document.getElementById('startDateError'),
   rentDueDay: document.getElementById('rentDueDayError'),
   subTenantName: document.getElementById('subTenantNameError'),
+  subTenantEmail: document.getElementById('subTenantEmailError'),
   subTenantAddress: document.getElementById('subTenantAddressError'),
   agreeTerms: document.getElementById('agreeTermsError'),
 };
@@ -188,11 +189,11 @@ const setAgreeError = (hasError, show) => {
 };
 
 const validateForm = (showAll = false, data = currentFormData) => {
+  const rentDueDayNumber = Number(data.rentDueDay);
   const errors = {
     agreementDate: !data.agreementDate,
     startDate: !data.startDate,
-    rentDueDay:
-      !data.rentDueDay || Number(data.rentDueDay) < 1 || Number(data.rentDueDay) > 28,
+    rentDueDay: !data.rentDueDay || rentDueDayNumber !== 1,
     subTenantName: !data.subTenantName,
     subTenantAddress: !data.subTenantAddress,
     agreeTerms: !data.agreeTerms,
@@ -213,7 +214,7 @@ const validateForm = (showAll = false, data = currentFormData) => {
   setFieldError(
     'rentDueDay',
     errors.rentDueDay,
-    'Enter a due day between 1 and 28.',
+    'Rent is fixed to the 1st of each month.',
     showAll || touchedFields.has('rentDueDay')
   );
   setFieldError(
@@ -227,6 +228,14 @@ const validateForm = (showAll = false, data = currentFormData) => {
     errors.subTenantAddress,
     'Enter the sub-tenant’s address.',
     showAll || touchedFields.has('subTenantAddress')
+  );
+  const emailHasValue = Boolean(data.subTenantEmail);
+  const emailInvalid = emailHasValue && !isValidEmail(data.subTenantEmail);
+  setFieldError(
+    'subTenantEmail',
+    emailInvalid,
+    'Enter a valid email address.',
+    showAll || touchedFields.has('subTenantEmail')
   );
   setAgreeError(errors.agreeTerms, showAll || touchedFields.has('agreeTerms'));
 
@@ -281,8 +290,7 @@ const updateSignTabAvailability = (data = currentFormData) => {
     data.subTenantName &&
     data.subTenantAddress &&
     data.rentDueDay &&
-    Number(data.rentDueDay) >= 1 &&
-    Number(data.rentDueDay) <= 28 &&
+    Number(data.rentDueDay) === 1 &&
     data.agreeTerms;
   signTab.disabled = !basicValid;
   signTab.setAttribute('aria-disabled', String(!basicValid));
@@ -332,7 +340,7 @@ const applyStoredForm = () => {
     fieldElements.startDate.value = '2025-11-14';
   }
   if (fieldElements.rentDueDay && !fieldElements.rentDueDay.value) {
-    fieldElements.rentDueDay.value = '14';
+    fieldElements.rentDueDay.value = '1';
   }
 
   const stored = getStoredFormData();
@@ -343,8 +351,8 @@ const applyStoredForm = () => {
   if (fieldElements.startDate && stored.startDate) {
     fieldElements.startDate.value = formatDateInput(stored.startDate) || stored.startDate;
   }
-  if (fieldElements.rentDueDay && stored.rentDueDay) {
-    fieldElements.rentDueDay.value = stored.rentDueDay;
+  if (fieldElements.rentDueDay) {
+    fieldElements.rentDueDay.value = '1';
   }
   if (fieldElements.subTenantName && stored.subTenantName) {
     fieldElements.subTenantName.value = stored.subTenantName;
@@ -673,20 +681,21 @@ const updatePreview = (data = currentFormData) => {
   });
 };
 
-const updateExportState = (data = currentFormData) => {
+const updateExportState = (data = currentFormData, formValid) => {
   if (!exportButton) return;
+  const isFormValid = typeof formValid === 'boolean' ? formValid : validateForm(false, data);
   const subSignaturePresent = Boolean(signatureStates.sigSub0?.image);
   const coSignaturePresent = !data.hasCoSubTenant || Boolean(signatureStates.sigSub1?.image);
-  const canExport = subSignaturePresent && coSignaturePresent;
+  const canExport = isFormValid && subSignaturePresent && coSignaturePresent;
   exportButton.disabled = !canExport;
 };
 
 const refreshState = () => {
   currentFormData = collectFormData();
+  const formValid = validateForm(false, currentFormData);
   updatePreview(currentFormData);
   updateSignTabAvailability(currentFormData);
-  updateExportState(currentFormData);
-  validateForm(false, currentFormData);
+  updateExportState(currentFormData, formValid);
 };
 
 applyStoredForm();
@@ -714,9 +723,18 @@ Object.entries(fieldElements).forEach(([name, element]) => {
   }
 });
 
-const goToSign = () => {
+const ensureFormValidityForActions = () => {
   refreshState();
   const valid = validateForm(true, currentFormData);
+  updateExportState(currentFormData, valid);
+  if (!valid) {
+    showTab('agreement');
+  }
+  return valid;
+};
+
+const goToSign = () => {
+  const valid = ensureFormValidityForActions();
   if (!valid) return;
   updateSignTabAvailability(currentFormData);
   if (!tabs.find((tab) => tab.dataset.tab === 'sign')?.disabled) {
@@ -736,8 +754,7 @@ tabs.forEach((tab) => {
   tab.addEventListener('click', () => {
     const name = tab.dataset.tab;
     if (name === 'sign') {
-      refreshState();
-      if (!validateForm(true, currentFormData)) return;
+      if (!ensureFormValidityForActions()) return;
       updateSignTabAvailability(currentFormData);
       if (tab.disabled) return;
     }
@@ -749,10 +766,18 @@ const emailAgreementButton = document.getElementById('sendAgreementEmail');
 const getPreviewHtml = () => previewContainer?.outerHTML ?? '';
 
 emailAgreementButton?.addEventListener('click', async () => {
-  refreshState();
+  const formValid = ensureFormValidityForActions();
   const emailAddress = currentFormData.subTenantEmail;
-  if (!emailAddress || !isValidEmail(emailAddress)) {
-    alert('Please enter a valid email address for the Sub-Tenant.');
+  const emailValid = Boolean(emailAddress) && isValidEmail(emailAddress);
+  touchedFields.add('subTenantEmail');
+  setFieldError(
+    'subTenantEmail',
+    !emailValid,
+    'Enter a valid email address to send the agreement.',
+    true
+  );
+  if (!formValid || !emailValid) {
+    fieldElements.subTenantEmail?.focus();
     return;
   }
 
@@ -790,7 +815,8 @@ emailAgreementButton?.addEventListener('click', async () => {
 
 const emailButton = document.getElementById('emailDavid');
 emailButton?.addEventListener('click', () => {
-  refreshState();
+  const formValid = ensureFormValidityForActions();
+  if (!formValid) return;
   const names = currentFormData.hasCoSubTenant
     ? `${currentFormData.subTenantName || 'Sub-tenant'} & ${
         currentFormData.coSubTenantName || 'Co-sub-tenant'
@@ -844,8 +870,8 @@ ${currentFormData.subTenantName || 'Sub-tenant'}`
 
 const exportPdfButton = exportButton;
 exportPdfButton?.addEventListener('click', () => {
-  refreshState();
-  if (exportPdfButton.disabled) return;
+  const formValid = ensureFormValidityForActions();
+  if (!formValid || exportPdfButton.disabled) return;
   window.print();
 });
 

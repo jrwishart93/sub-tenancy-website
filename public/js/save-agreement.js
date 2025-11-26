@@ -2,6 +2,20 @@ import { db, collection, addDoc, serverTimestamp } from "./firebase-init.js";
 
 const PROPERTY_ADDRESS = "Flat 1, 61 Caledonian Crescent, Edinburgh";
 
+const DAVID_SIGNATURE_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 140">
+      <style>
+        text { font-family: "Brush Script MT", "Segoe Script", cursive; font-size: 48px; fill: #0b3d91; }
+        path { stroke: #0b3d91; stroke-width: 3; fill: none; }
+      </style>
+      <text x="16" y="86">David Martin</text>
+      <path d="M18 98 C 80 120, 140 120, 210 102" />
+    </svg>`
+)}
+`;
+
+const DAVID_SIGNATURE_TIMESTAMP = "Signed on 14 November 2024 (UK time)";
+
 const getInputValue = (id) => {
   const el = document.getElementById(id);
   if (!el) return "";
@@ -59,6 +73,9 @@ const buildPayload = () => {
   const rentDueDay = getInputValue("rentDay");
   const deposit = typeof rent === "number" && Number.isFinite(rent) ? Math.max(rent * 2, 0) : null;
 
+  const leadSignature = getCanvasData("sigTenant") || DAVID_SIGNATURE_IMAGE;
+  const leadTimestamp = getInputValue("stampTenant") || DAVID_SIGNATURE_TIMESTAMP;
+
   return {
     tenantName: getInputValue("tenantName"),
     tenantEmail: getInputValue("tenantEmail"),
@@ -73,8 +90,8 @@ const buildPayload = () => {
     deposit,
     witnessName: getInputValue("witName"),
     agreedTerms: getCheckboxValue("agreeCheck"),
-    signedByTenant: getCanvasData("sigTenant"),
-    tenantSignatureTimestamp: getInputValue("stampTenant"),
+    signedByTenant: leadSignature,
+    tenantSignatureTimestamp: leadTimestamp,
     witnessSignature: getCanvasData("sigWitness"),
     witnessSignatureTimestamp: getInputValue("stampWit"),
     subTenants: collectSubTenants(),

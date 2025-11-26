@@ -563,6 +563,12 @@ button,
   height: 180px;
 }
 
+.sig-pad img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .sig-tools {
   display: flex;
   flex-wrap: wrap;

@@ -154,7 +154,11 @@
     <section id="tab-sign" class="tab-panel" role="region" aria-labelledby="tab-sign-title" hidden>
       <div class="panel-card">
         <h2 id="tab-sign-title">Sign and export</h2>
-        <p class="hint">Draw signatures directly on the pads below or upload a clear photo. Use “Stamp time” to record a UK timestamp.</p>
+        <p class="hint">
+          David Martin has already signed. His signature is pre-filled below. Sub-tenant and
+          witness can draw signatures on their pads or upload a clear photo. Use “Stamp time” to
+          record a UK timestamp.
+        </p>
 
         <div class="signature-section" id="signatureSection">
           <article class="signature-card" data-role="sub">
@@ -173,16 +177,11 @@
 
           <article class="signature-card">
             <h3>Lead Tenant signature</h3>
-            <div class="sig-pad" role="img" aria-label="Lead Tenant signature pad">
-              <canvas id="sigTenant" data-storage="sig_tenant"></canvas>
+            <p class="hint">David Martin’s signed copy is already on file.</p>
+            <div class="sig-pad" aria-label="Lead Tenant signature">
+              <img alt="Lead Tenant signature" data-sig-img="sigTenant" class="signature-image" width="260">
             </div>
-            <div class="sig-tools">
-              <button type="button" class="btn" data-action="clear" data-target="sigTenant">Clear</button>
-              <button type="button" class="btn" data-action="stamp" data-target="sigTenant">Stamp time</button>
-              <label class="btn ghost" for="sigTenantUpload">Upload</label>
-              <input type="file" id="sigTenantUpload" data-target="sigTenant" accept="image/*" class="visually-hidden">
-              <span class="hint" id="sigTenantTime" aria-live="polite">No timestamp yet</span>
-            </div>
+            <p class="hint"><strong>Signed and dated:</strong> <span data-bind="sigTenantStamp">Signed on file</span></p>
           </article>
 
           <article class="signature-card">

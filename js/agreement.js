@@ -700,6 +700,15 @@ function prepareForPrint() {
   });
 }
 
+function ensurePreviewReady() {
+  const previewHtml = document.getElementById('agreement-preview')?.innerHTML || '';
+  if (!previewHtml.trim()) {
+    alert('Please generate the agreement preview before exporting to PDF.');
+    return false;
+  }
+  return true;
+}
+
 const formatEmailDate = (value) => {
   if (!value) return '';
   const date = new Date(value);
@@ -846,6 +855,7 @@ $('btnGenerate')?.addEventListener('click', () => {
 $('btnPrint')?.addEventListener('click', () => {
   bindAgreement();
   prepareForPrint();
+  if (!ensurePreviewReady()) return;
   window.print();
 });
 document.addEventListener('DOMContentLoaded', () => {
@@ -854,6 +864,7 @@ document.addEventListener('DOMContentLoaded', () => {
     exportBtn.addEventListener('click', () => {
       bindAgreement();
       prepareForPrint();
+      if (!ensurePreviewReady()) return;
       window.print();
     });
   }

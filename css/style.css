@@ -760,19 +760,80 @@ button,
 
 @page {
   size: A4;
-  margin: 20mm;
+  margin: 15mm 18mm 18mm 18mm;
 }
 
 @media print {
+  /* Reset background and layout */
+  html,
   body {
-    background: #ffffff;
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0;
+    padding: 0;
   }
 
+  /* Main container should take full page width */
+  .container,
+  .page,
+  .page-container,
+  .agreement,
+  .preview-column,
+  #preview {
+    max-width: none !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    border: none !important;
+  }
+
+  /* Remove card styling, extra padding, and drop shadows */
+  .section-card,
+  .agreement-card,
+  #agreement-preview {
+    background: #ffffff !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 0 8pt 0 !important;
+  }
+
+  /* Base font for print: readable but not huge */
+  body,
+  #agreement-preview {
+    font-family: "Times New Roman", Georgia, serif;
+    font-size: 11pt;
+    line-height: 1.35;
+  }
+
+  /* Headings slightly larger but not massive */
+  #agreement-preview h2 {
+    font-size: 14pt;
+    margin: 0 0 8pt;
+  }
+
+  #agreement-preview h3 {
+    font-size: 12pt;
+    margin: 10pt 0 4pt;
+  }
+
+  #agreement-preview h4 {
+    font-size: 11pt;
+    margin: 8pt 0 4pt;
+  }
+
+  /* Remove all navigation, form UI, buttons, etc. from print */
   header,
   nav,
-  .glass-nav,
+  .tabs,
+  .tab-bar,
+  .button-row,
+  button,
+  .form-section,
+  form,
   .banner,
-  .form-column,
   .toolbar,
   .toolbar-bottom,
   .actions-mobile,
@@ -781,49 +842,43 @@ button,
   .upload,
   .page-header,
   .page-footer,
-  button,
-  input,
-  select,
-  textarea,
-  label,
-  .hint,
-  .error {
+  .glass-nav,
+  #rent-reminder {
     display: none !important;
   }
 
-  main,
-  .page-container,
-  .preview-column,
-  #preview {
-    display: block;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    max-width: none;
-    box-shadow: none;
-    border: none;
-  }
-
+  /* Only the agreement preview should remain visible */
   #agreement-preview {
-    display: block;
-    max-width: 100%;
-    font-size: 11pt;
-    line-height: 1.4;
+    display: block !important;
   }
 
+  /* Lists and paragraphs: tighten spacing slightly */
+  #agreement-preview p {
+    margin: 0 0 6pt;
+  }
+
+  #agreement-preview ul,
+  #agreement-preview ol {
+    margin: 0 0 6pt 18pt;
+    padding: 0;
+  }
+
+  #agreement-preview li {
+    margin: 0 0 3pt;
+  }
+
+  /* Avoid bad page breaks */
+  #agreement-preview h2,
   #agreement-preview h3,
-  #agreement-preview h4 {
-    page-break-after: avoid;
-  }
-
+  #agreement-preview h4,
   #agreement-preview p,
   #agreement-preview li {
     page-break-inside: avoid;
   }
 
+  /* Keep signature block together */
+  .signature-block,
   .signature-text {
-    font-family: 'Dancing Script', cursive !important;
-    font-size: 2rem !important;
-    color: #000 !important;
+    page-break-inside: avoid;
   }
 }

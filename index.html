@@ -112,6 +112,11 @@
               <p class="error" id="subTenantNameError"></p>
             </div>
             <div class="field">
+              <label for="subTenantEmail">Sub-Tenant email</label>
+              <input type="email" id="subTenantEmail" name="subTenantEmail" autocomplete="email">
+              <p class="error" id="subTenantEmailError"></p>
+            </div>
+            <div class="field">
               <label class="required" for="subTenantAddress">Sub-Tenant address</label>
               <textarea id="subTenantAddress" name="subTenantAddress" rows="3" required></textarea>
               <p class="error" id="subTenantAddressError"></p>
@@ -324,6 +329,7 @@
 
         <div class="form-actions">
           <button type="button" class="btn" id="backToDetails">Back to Agreement</button>
+          <button type="button" class="btn" id="sendAgreementEmail">Email Agreement</button>
           <button type="button" class="btn" id="emailDavid">Email David</button>
           <button type="button" class="btn primary" id="exportPdf" disabled>Export as PDF</button>
         </div>

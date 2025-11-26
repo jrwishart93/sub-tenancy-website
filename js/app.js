@@ -78,6 +78,8 @@ const formatDateInput = (value) => {
   }
 };
 
+const isValidEmail = (value = '') => /[^\s@]+@[^\s@]+\.[^\s@]+/.test(value);
+
 const ordinal = (n) => {
   const num = Number(n);
   if (!Number.isFinite(num) || num <= 0) return '';
@@ -106,6 +108,7 @@ const fieldIds = {
   startDate: 'startDate',
   rentDueDay: 'rentDueDay',
   subTenantName: 'subTenantName',
+  subTenantEmail: 'subTenantEmail',
   subTenantAddress: 'subTenantAddress',
   coSubTenantName: 'coSubTenantName',
   coSubTenantAddress: 'coSubTenantAddress',
@@ -134,6 +137,7 @@ const collectFormData = () => {
   const startDate = fieldElements.startDate?.value?.trim() ?? '';
   const rentDueDay = fieldElements.rentDueDay?.value?.trim() ?? '';
   const subTenantName = fieldElements.subTenantName?.value?.trim() ?? '';
+  const subTenantEmail = fieldElements.subTenantEmail?.value?.trim() ?? '';
   const subTenantAddress = fieldElements.subTenantAddress?.value?.trim() ?? '';
   const coSubTenantName = fieldElements.coSubTenantName?.value?.trim() ?? '';
   const coSubTenantAddress = fieldElements.coSubTenantAddress?.value?.trim() ?? '';
@@ -145,6 +149,7 @@ const collectFormData = () => {
     startDate,
     rentDueDay,
     subTenantName,
+    subTenantEmail,
     subTenantAddress,
     coSubTenantName,
     coSubTenantAddress,
@@ -343,6 +348,9 @@ const applyStoredForm = () => {
   }
   if (fieldElements.subTenantName && stored.subTenantName) {
     fieldElements.subTenantName.value = stored.subTenantName;
+  }
+  if (fieldElements.subTenantEmail && stored.subTenantEmail) {
+    fieldElements.subTenantEmail.value = stored.subTenantEmail;
   }
   if (fieldElements.subTenantAddress && stored.subTenantAddress) {
     fieldElements.subTenantAddress.value = stored.subTenantAddress;
@@ -617,6 +625,7 @@ const initSignaturePad = (id) => {
 
 const coSubSignatureCard = document.getElementById('coSubSignature');
 const exportButton = document.getElementById('exportPdf');
+const previewContainer = document.getElementById('preview');
 
 const updatePreview = (data = currentFormData) => {
   const hasCoSub = data.hasCoSubTenant;
@@ -734,6 +743,49 @@ tabs.forEach((tab) => {
     }
     showTab(name);
   });
+});
+
+const emailAgreementButton = document.getElementById('sendAgreementEmail');
+const getPreviewHtml = () => previewContainer?.outerHTML ?? '';
+
+emailAgreementButton?.addEventListener('click', async () => {
+  refreshState();
+  const emailAddress = currentFormData.subTenantEmail;
+  if (!emailAddress || !isValidEmail(emailAddress)) {
+    alert('Please enter a valid email address for the Sub-Tenant.');
+    return;
+  }
+
+  const previewHtml = getPreviewHtml();
+  if (!previewHtml) {
+    alert('Unable to find the agreement preview.');
+    return;
+  }
+
+  const subjectName = currentFormData.subTenantName || 'Sub-tenant';
+  const subject = `Your Sub-Tenancy Agreement – ${subjectName}`;
+
+  emailAgreementButton.disabled = true;
+  emailAgreementButton.setAttribute('aria-busy', 'true');
+
+  try {
+    const response = await fetch('/api/send-agreement', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to: emailAddress, subject, html: previewHtml }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Unable to send email');
+    }
+
+    alert('Agreement emailed successfully.');
+  } catch (error) {
+    alert('Unable to send the agreement by email. Please try again.');
+  } finally {
+    emailAgreementButton.disabled = false;
+    emailAgreementButton.removeAttribute('aria-busy');
+  }
 });
 
 const emailButton = document.getElementById('emailDavid');

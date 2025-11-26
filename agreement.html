@@ -46,14 +46,22 @@
 
                 <div class="row">
                   <div class="form-field">
-                    <label for="agreeDate" class="required">Date of Agreement</label>
-                    <input id="agreeDate" type="date" aria-required="true" aria-describedby="errAgreeDate">
-                    <div id="errAgreeDate" class="error" role="alert">Please provide the agreement date.</div>
+                    <label for="agreementDate" class="required">Agreement Date</label>
+                    <input id="agreementDate" type="date" aria-required="true" aria-describedby="errAgreementDate">
+                    <div id="errAgreementDate" class="error" role="alert">Please provide the agreement date.</div>
                   </div>
                   <div class="form-field">
-                    <label for="startDate" class="required">Start Date</label>
-                    <input id="startDate" type="date" aria-required="true" aria-describedby="errStartDate">
-                    <div id="errStartDate" class="error" role="alert">Please provide a start date.</div>
+                    <label for="signatureDate" class="required">Signature Date</label>
+                    <input id="signatureDate" type="date" aria-required="true" aria-describedby="errSignatureDate">
+                    <div id="errSignatureDate" class="error" role="alert">Please provide the signature date.</div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="form-field">
+                    <label for="moveInDate" class="required">Move-In Date</label>
+                    <input id="moveInDate" type="date" value="2025-11-29" aria-required="true" aria-describedby="errMoveInDate">
+                    <div id="errMoveInDate" class="error" role="alert">Please provide the move-in date.</div>
                   </div>
                 </div>
 
@@ -76,8 +84,9 @@
                     <div id="errRent" class="error" role="alert">Rent must be at least £1.</div>
                   </div>
                   <div class="form-field">
-                    <label for="rentDay" class="required">Rent Due Day</label>
-                    <select id="rentDay" aria-required="true"></select>
+                    <label for="rentDueDate" class="required">Rent Due Day</label>
+                    <input id="rentDueDate" type="number" min="1" max="28" value="1" readonly aria-required="true" aria-describedby="errRentDueDate">
+                    <div id="errRentDueDate" class="error" role="alert">Rent due date is required.</div>
                   </div>
                 </div>
 
@@ -163,7 +172,7 @@
                 <p><strong>Property:</strong> Flat 1, 61 Caledonian Crescent, Edinburgh</p>
                 <div class="divider"></div>
 
-                <p>This Sub-Tenancy Agreement (“the Agreement”) is made on <span data-bind="agreeDate">[Date]</span> between:</p>
+                <p>This Sub-Tenancy Agreement (“the Agreement”) is made on <span data-bind="agreementDate">[Date]</span> between:</p>
                 <ol class="party-list">
                   <li><strong><span data-bind="tenantName">David Martin</span></strong> (“the Tenant” or “lead tenant”), the primary tenant and current occupier who rents the property from the landlord through <span data-bind="agent">Milard’s Property Management</span> and has written permission to sub-let one room in the property; and</li>
                   <li><strong><span data-bind="subTenant0">[Sub-Tenant full name]</span></strong> (“the Sub-Tenant”), of <span data-bind="subTenantAddr0">[Sub-Tenant address]</span>.<br>
@@ -176,12 +185,12 @@
                 <p>The property is a two-bedroom ground-floor flat. The Sub-Tenant rents one private bedroom for exclusive use. Shared areas with the Tenant include the kitchen, living room, shower/toilet, and garden. Communal facilities include the central garden, heated pool, gym, and sauna (access provided via the factor fee). Both the Tenant and Sub-Tenant(s) agree to look after all shared areas, keeping them reasonably clean, tidy and well maintained throughout the tenancy.</p>
 
                 <h4>2. Term</h4>
-                <p>The Agreement begins on <span data-bind="startDate">[Start Date]</span> and continues on a monthly basis until ended under Section 12.</p>
+                <p>The Agreement begins on <span data-bind="moveInDate">[Move-In Date]</span> and continues on a monthly basis until ended under Section 12.</p>
 
                 <h4>3. Rent and Payment Method</h4>
                 <ul>
                   <li>Monthly rent is <strong>£<span data-bind="rent">750</span></strong> for the private room and shared/communal access.</li>
-                  <li>Rent is due on or before the <strong><span data-bind="rentDayOrdinal">[Due Day]</span></strong> of each month and is payable to <span data-bind="tenantName">David Martin</span>.</li>
+                  <li>Rent is due on or before the <strong><span data-bind="rentDueDateOrdinal">[Due Day]</span></strong> of each month and is payable to <span data-bind="tenantName">David Martin</span>.</li>
                   <li>Payment details: Account name: David Martin. Account number: 70629995. Sort code: 20-33-96. Reference: Your full name.</li>
                   <li>A standing order is recommended to ensure payments are on time.</li>
                   <li>The rent includes the building factor fee for communal facilities and estate maintenance. The landlord and managing agent continue to pay the factor directly; the Sub-Tenant does not pay this separately. The lead tenant continues to pay the full property rent to the landlord/agent.</li>
@@ -249,7 +258,9 @@
                 <div class="divider"></div>
 
                 <h4>Acceptance</h4>
-                <p>By signing below, the Sub-Tenant(s) confirm they have read and understood this Agreement, agree to pay £<span data-bind="initTotal">1500</span> upfront (first and last month’s rent, with no separate deposit), then £<span data-bind="rent">750</span> on or before the <span data-bind="rentDayOrdinal">[Due Day]</span> of each month, agree to split utilities and council tax equally, will follow the house rules, and will provide at least 28 days’ written notice before ending the tenancy.</p>
+                <p>By signing below, the Sub-Tenant(s) confirm they have read and understood this Agreement, agree to pay £<span data-bind="initTotal">1500</span> upfront (first and last month’s rent, with no separate deposit), then £<span data-bind="rent">750</span> on or before the <span data-bind="rentDueDateOrdinal">[Due Day]</span> of each month, agree to split utilities and council tax equally, will follow the house rules, and will provide at least 28 days’ written notice before ending the tenancy.</p>
+
+                <p><strong>Signature Date:</strong> <span data-bind="signatureDate">[Signature Date]</span></p>
 
                 <div class="signing" id="signingSubs"></div>
 

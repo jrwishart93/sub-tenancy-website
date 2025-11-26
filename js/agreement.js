@@ -54,68 +54,79 @@ const debounce = (fn, wait = 300) => {
   };
 };
 
-const FORM_KEY = 'tenancyForm_v3';
+const FORM_KEY = 'tenancyForm_v4';
 const SIG_KEYS = {
   tenant: 'sig_tenant',
   witness: 'sig_witness',
 };
 const MAX_SUBS = 2;
-
-const rentDaySelect = $('rentDay');
-if (rentDaySelect) {
-  const options = Array.from({ length: 28 }, (_, i) => i + 1);
-  options.forEach((day) => {
-    const opt = document.createElement('option');
-    opt.value = String(day);
-    opt.textContent = String(day);
-    if (day === 14) opt.selected = true;
-    rentDaySelect.appendChild(opt);
-  });
-}
-
-const today = new Date();
-const agreeDateInput = $('agreeDate');
-const startDateInput = $('startDate');
-if (agreeDateInput) {
-  agreeDateInput.value = today.toISOString().slice(0, 10);
-}
-if (startDateInput) {
-  const nextWeek = new Date();
-  nextWeek.setDate(nextWeek.getDate() + 7);
-  startDateInput.value = nextWeek.toISOString().slice(0, 10);
-}
-
 const els = {
-  agreeDate: $('agreeDate'),
-  startDate: $('startDate'),
+  agreementDate: $('agreementDate'),
+  signatureDate: $('signatureDate'),
+  moveInDate: $('moveInDate'),
   tenantName: $('tenantName'),
   agent: $('agent'),
   rent: $('rent'),
-  rentDay: $('rentDay'),
+  rentDueDate: $('rentDueDate'),
   witName: $('witName'),
   imgTenant: $('imgTenant'),
   imgWit: $('imgWit'),
   stampTenant: $('stampTenant'),
   stampWit: $('stampWit'),
-  errAgreeDate: $('errAgreeDate'),
-  errStartDate: $('errStartDate'),
+  errAgreementDate: $('errAgreementDate'),
+  errSignatureDate: $('errSignatureDate'),
+  errMoveInDate: $('errMoveInDate'),
   errRent: $('errRent'),
+  errRentDueDate: $('errRentDueDate'),
   subsContainer: $('subsContainer'),
   sigContainer: $('sigContainer'),
   signingSubs: $('signingSubs'),
 };
+
+const today = new Date();
+const yyyy = today.getFullYear();
+const mm = String(today.getMonth() + 1).padStart(2, '0');
+const dd = String(today.getDate()).padStart(2, '0');
+const todayFormatted = `${yyyy}-${mm}-${dd}`;
+
+const setAgreementAndSignatureDate = (value) => {
+  if (els.agreementDate) els.agreementDate.value = value;
+  if (els.signatureDate) els.signatureDate.value = value;
+};
+
+setAgreementAndSignatureDate(todayFormatted);
+
+const syncAgreementAndSignature = (event) => {
+  const value = event?.target?.value || todayFormatted;
+  setAgreementAndSignatureDate(value);
+};
+
+if (els.moveInDate) {
+  els.moveInDate.value = '2025-11-29';
+}
+
+if (els.rentDueDate) {
+  els.rentDueDate.value = '1';
+  els.rentDueDate.setAttribute('readonly', 'true');
+}
 
 const validateRentField = () => {
   const rentValue = Number(els.rent?.value || 0);
   showError(els.rent, els.errRent, !(rentValue >= 1));
 };
 
-els.agreeDate?.addEventListener('change', () => {
-  showError(els.agreeDate, els.errAgreeDate, !els.agreeDate?.value);
+els.agreementDate?.addEventListener('change', (event) => {
+  syncAgreementAndSignature(event);
+  showError(els.agreementDate, els.errAgreementDate, !els.agreementDate?.value);
 });
 
-els.startDate?.addEventListener('change', () => {
-  showError(els.startDate, els.errStartDate, !els.startDate?.value);
+els.signatureDate?.addEventListener('change', (event) => {
+  syncAgreementAndSignature(event);
+  showError(els.signatureDate, els.errSignatureDate, !els.signatureDate?.value);
+});
+
+els.moveInDate?.addEventListener('change', () => {
+  showError(els.moveInDate, els.errMoveInDate, !els.moveInDate?.value);
 });
 
 els.rent?.addEventListener('input', validateRentField);
@@ -147,11 +158,13 @@ function validateSubs(subs) {
 
 function validateForm(subs) {
   const rentValue = Number(els.rent?.value || 0);
-  const v1 = showError(els.agreeDate, els.errAgreeDate, !els.agreeDate?.value);
-  const v2 = showError(els.startDate, els.errStartDate, !els.startDate?.value);
-  const v3 = showError(els.rent, els.errRent, !(rentValue >= 1));
-  const v4 = validateSubs(subs);
-  return v1 && v2 && v3 && v4;
+  const v1 = showError(els.agreementDate, els.errAgreementDate, !els.agreementDate?.value);
+  const v2 = showError(els.signatureDate, els.errSignatureDate, !els.signatureDate?.value);
+  const v3 = showError(els.moveInDate, els.errMoveInDate, !els.moveInDate?.value);
+  const v4 = showError(els.rent, els.errRent, !(rentValue >= 1));
+  const v5 = showError(els.rentDueDate, els.errRentDueDate, !els.rentDueDate?.value);
+  const v6 = validateSubs(subs);
+  return v1 && v2 && v3 && v4 && v5 && v6;
 }
 
 function createSignaturePad({ canvasId, timeSpanId, stampOutputId, storageKey, imgId }) {
@@ -441,10 +454,11 @@ function saveForm() {
       sub.addr = $(`subAddr_${sub.index}`)?.value || '';
     });
     const data = {
-      agreeDate: els.agreeDate?.value,
-      startDate: els.startDate?.value,
+      agreementDate: els.agreementDate?.value,
+      signatureDate: els.signatureDate?.value,
+      moveInDate: els.moveInDate?.value,
       rent: els.rent?.value,
-      rentDay: els.rentDay?.value,
+      rentDueDate: els.rentDueDate?.value,
       witName: els.witName?.value,
       subs: subs.map((sub) => ({
         index: sub.index,
@@ -480,10 +494,11 @@ function loadForm() {
       }))
       : [newSub(0)];
     renderSubs();
-    if (data.agreeDate && els.agreeDate) els.agreeDate.value = data.agreeDate;
-    if (data.startDate && els.startDate) els.startDate.value = data.startDate;
+    const storedAgreementDate = data.agreementDate || data.signatureDate || todayFormatted;
+    setAgreementAndSignatureDate(storedAgreementDate);
+    if (data.moveInDate && els.moveInDate) els.moveInDate.value = data.moveInDate;
     if (data.rent && els.rent) els.rent.value = data.rent;
-    if (data.rentDay && els.rentDay) els.rentDay.value = data.rentDay;
+    if (els.rentDueDate) els.rentDueDate.value = '1';
     if (data.witName && els.witName) els.witName.value = data.witName;
     subs.forEach((sub) => {
       const nameField = $(`subName_${sub.index}`);
@@ -498,18 +513,26 @@ function loadForm() {
 }
 
 function bindAgreement() {
-  const agreeDate = els.agreeDate?.value ? new Date(els.agreeDate.value).toLocaleDateString('en-GB') : '';
-  setBind('agreeDate', agreeDate);
-  const startDate = els.startDate?.value ? new Date(els.startDate.value).toLocaleDateString('en-GB') : '';
-  setBind('startDate', startDate);
+  const agreementDate = els.agreementDate?.value
+    ? new Date(els.agreementDate.value).toLocaleDateString('en-GB')
+    : '';
+  setBind('agreementDate', agreementDate);
+  const signatureDate = els.signatureDate?.value
+    ? new Date(els.signatureDate.value).toLocaleDateString('en-GB')
+    : '';
+  setBind('signatureDate', signatureDate);
+  const moveInDate = els.moveInDate?.value
+    ? new Date(els.moveInDate.value).toLocaleDateString('en-GB')
+    : '';
+  setBind('moveInDate', moveInDate);
   setBind('tenantName', els.tenantName?.value || '');
   setBind('agent', els.agent?.value || '');
   const rent = Number(els.rent?.value || 0);
   setBind('rent', rent ? String(rent) : '0');
-  const rentDayVal = Number(els.rentDay?.value || 0);
-  const rentDay = rentDayVal ? String(rentDayVal) : '';
-  setBind('rentDay', rentDay);
-  setBind('rentDayOrdinal', rentDayVal ? toOrdinal(rentDayVal) : '');
+  const rentDueDayVal = Number(els.rentDueDate?.value || 0);
+  const rentDueDay = rentDueDayVal ? String(rentDueDayVal) : '';
+  setBind('rentDueDate', rentDueDay);
+  setBind('rentDueDateOrdinal', rentDueDayVal ? toOrdinal(rentDueDayVal) : '');
   setBind('notice', '28 days');
   const initTotal = rent * 2;
   setBind('initTotal', initTotal ? String(initTotal) : '0');
@@ -557,12 +580,13 @@ function emailDavid() {
     })
     .join(' & ');
   const subject = encodeURIComponent(`Sub-Tenancy Agreement — ${names}`);
-  const agreementDate = formatEmailDate(els.agreeDate?.value) || '[date]';
-  const startDate = formatEmailDate(els.startDate?.value) || '[start date]';
+  const agreementDate = formatEmailDate(els.agreementDate?.value) || '[date]';
+  const signatureDate = formatEmailDate(els.signatureDate?.value) || '[signature date]';
+  const moveInDate = formatEmailDate(els.moveInDate?.value) || '[move-in date]';
   const rentValue = Number(els.rent?.value || 0);
   const rentDisplay = rentValue ? `£${rentValue}` : '£[rent]';
   const initTotal = rentValue ? `£${rentValue * 2}` : '£[initial total]';
-  const rentDueDay = els.rentDay?.value ? toOrdinal(Number(els.rentDay.value)) : '[Due Day]';
+  const rentDueDay = els.rentDueDate?.value ? toOrdinal(Number(els.rentDueDate.value)) : '[Due Day]';
 
   const partiesSection = `This Sub-Tenancy Agreement (“the Agreement”) is made on ${agreementDate} between:\n1. David Martin (“the Tenant” or “lead tenant”), the primary tenant and current occupier who rents the property from the landlord through Milard’s Property Management and has written permission to sub-let one room in the property; and\n2. ${names} (“the Sub-Tenant”).`;
 
@@ -579,7 +603,8 @@ The sub-tenancy agreement is completed for ${names}.
 
 Property: Flat 1, 61 Caledonian Crescent, Edinburgh
 Agreement date: ${agreementDate}
-Start Date: ${startDate}
+Signature Date: ${signatureDate}
+Move-In Date: ${moveInDate}
 Monthly Rent: ${rentDisplay}
 Rent Due Day: ${rentDueDay}
 
@@ -605,12 +630,10 @@ function clearForm() {
   } catch (e) {
     // ignore
   }
-  const nextWeek = new Date();
-  nextWeek.setDate(nextWeek.getDate() + 7);
-  if (els.agreeDate) els.agreeDate.value = today.toISOString().slice(0, 10);
-  if (els.startDate) els.startDate.value = nextWeek.toISOString().slice(0, 10);
+  setAgreementAndSignatureDate(todayFormatted);
+  if (els.moveInDate) els.moveInDate.value = '2025-11-29';
   if (els.rent) els.rent.value = '750';
-  if (els.rentDay) els.rentDay.value = '14';
+  if (els.rentDueDate) els.rentDueDate.value = '1';
   if (els.witName) els.witName.value = '';
   subs = [newSub(0)];
   renderSubs();
@@ -622,7 +645,7 @@ function scrollToTop(e) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-['agreeDate', 'startDate', 'rent', 'rentDay', 'witName'].forEach((id) => {
+['agreementDate', 'signatureDate', 'moveInDate', 'rent', 'rentDueDate', 'witName'].forEach((id) => {
   const el = $(id);
   if (!el) return;
   el.addEventListener('input', debounce(saveForm, 500));

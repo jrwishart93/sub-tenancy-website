@@ -157,116 +157,118 @@
           </div>
           <aside class="preview-column" aria-label="Agreement preview">
             <section id="preview" class="agreement card" aria-label="Agreement Preview">
-              <h3>Sub-Tenancy Agreement for Room Rental</h3>
-              <p><strong>Property:</strong> Flat 1, 61 Caledonian Crescent, Edinburgh</p>
-              <div class="divider"></div>
+              <section id="agreement-preview">
+                <h3>Sub-Tenancy Agreement for Room Rental</h3>
+                <p><strong>Property:</strong> Flat 1, 61 Caledonian Crescent, Edinburgh</p>
+                <div class="divider"></div>
 
-              <p>This Sub-Tenancy Agreement (“the Agreement”) is made on <span data-bind="agreeDate">[Date]</span> between:</p>
-              <ol class="party-list">
-                <li><strong><span data-bind="tenantName">David Martin</span></strong> (“the Tenant” or “lead tenant”), the primary tenant and current occupier who rents the property from the landlord through <span data-bind="agent">Milard’s Property Management</span> and has written permission to sub-let one room in the property; and</li>
-                <li><strong><span data-bind="subTenant0">[Sub-Tenant full name]</span></strong> (“the Sub-Tenant”), of <span data-bind="subTenantAddr0">[Sub-Tenant address]</span>.<br>
+                <p>This Sub-Tenancy Agreement (“the Agreement”) is made on <span data-bind="agreeDate">[Date]</span> between:</p>
+                <ol class="party-list">
+                  <li><strong><span data-bind="tenantName">David Martin</span></strong> (“the Tenant” or “lead tenant”), the primary tenant and current occupier who rents the property from the landlord through <span data-bind="agent">Milard’s Property Management</span> and has written permission to sub-let one room in the property; and</li>
+                  <li><strong><span data-bind="subTenant0">[Sub-Tenant full name]</span></strong> (“the Sub-Tenant”), of <span data-bind="subTenantAddr0">[Sub-Tenant address]</span>.<br>
                     <span data-if="hasSub1">If applicable: <strong><span data-bind="subTenant1">[Co-Sub-Tenant full name]</span></strong> (“the Co-Sub-Tenant”), of <span data-bind="subTenantAddr1">[Co-Sub-Tenant address]</span>.</span>
-                </li>
-              </ol>
-              <p>Where a Co-Sub-Tenant resides with the Sub-Tenant, both individuals agree to comply with all terms of this Agreement and are jointly and severally responsible for rent, conduct, and any damage caused by them or their guests (fair wear and tear excepted).</p>
+                  </li>
+                </ol>
+                <p>Where a Co-Sub-Tenant resides with the Sub-Tenant, both individuals agree to comply with all terms of this Agreement and are jointly and severally responsible for rent, conduct, and any damage caused by them or their guests (fair wear and tear excepted).</p>
 
-              <h4>1. Property and Facilities</h4>
-              <p>The property is a two-bedroom ground-floor flat. The Sub-Tenant rents one private bedroom for exclusive use. Shared areas with the Tenant include the kitchen, living room, shower/toilet, and garden. Communal facilities include the central garden, heated pool, gym, and sauna (access provided via the factor fee). Both the Tenant and Sub-Tenant(s) agree to look after all shared areas, keeping them reasonably clean, tidy and well maintained throughout the tenancy.</p>
+                <h4>1. Property and Facilities</h4>
+                <p>The property is a two-bedroom ground-floor flat. The Sub-Tenant rents one private bedroom for exclusive use. Shared areas with the Tenant include the kitchen, living room, shower/toilet, and garden. Communal facilities include the central garden, heated pool, gym, and sauna (access provided via the factor fee). Both the Tenant and Sub-Tenant(s) agree to look after all shared areas, keeping them reasonably clean, tidy and well maintained throughout the tenancy.</p>
 
-              <h4>2. Term</h4>
-              <p>The Agreement begins on <span data-bind="startDate">[Start Date]</span> and continues on a monthly basis until ended under Section 12.</p>
+                <h4>2. Term</h4>
+                <p>The Agreement begins on <span data-bind="startDate">[Start Date]</span> and continues on a monthly basis until ended under Section 12.</p>
 
-              <h4>3. Rent and Payment Method</h4>
-              <ul>
-                <li>Monthly rent is <strong>£<span data-bind="rent">750</span></strong> for the private room and shared/communal access.</li>
-                <li>Rent is due on or before the <strong><span data-bind="rentDayOrdinal">[Due Day]</span></strong> of each month and is payable to <span data-bind="tenantName">David Martin</span>.</li>
-                <li>Payment details: Account name: David Martin. Account number: 70629995. Sort code: 20-33-96. Reference: Your full name.</li>
-                <li>A standing order is recommended to ensure payments are on time.</li>
-                <li>The rent includes the building factor fee for communal facilities and estate maintenance. The landlord and managing agent continue to pay the factor directly; the Sub-Tenant does not pay this separately. The lead tenant continues to pay the full property rent to the landlord/agent.</li>
-                <li>If rent is unpaid when due, the Tenant may issue notice requiring payment or removal and may apply to court for payment or removal.</li>
-              </ul>
+                <h4>3. Rent and Payment Method</h4>
+                <ul>
+                  <li>Monthly rent is <strong>£<span data-bind="rent">750</span></strong> for the private room and shared/communal access.</li>
+                  <li>Rent is due on or before the <strong><span data-bind="rentDayOrdinal">[Due Day]</span></strong> of each month and is payable to <span data-bind="tenantName">David Martin</span>.</li>
+                  <li>Payment details: Account name: David Martin. Account number: 70629995. Sort code: 20-33-96. Reference: Your full name.</li>
+                  <li>A standing order is recommended to ensure payments are on time.</li>
+                  <li>The rent includes the building factor fee for communal facilities and estate maintenance. The landlord and managing agent continue to pay the factor directly; the Sub-Tenant does not pay this separately. The lead tenant continues to pay the full property rent to the landlord/agent.</li>
+                  <li>If rent is unpaid when due, the Tenant may issue notice requiring payment or removal and may apply to court for payment or removal.</li>
+                </ul>
 
-              <h4>4. Initial Payments (no deposit)</h4>
-              <p>The Sub-Tenant(s) agree to pay first and last month’s rent upfront on signing. The initial total is £<span data-bind="initTotal">1500</span>. There is no separate tenancy deposit. The last month’s rent is applied to the final month of the tenancy.</p>
+                <h4>4. Initial Payments (no deposit)</h4>
+                <p>The Sub-Tenant(s) agree to pay first and last month’s rent upfront on signing. The initial total is £<span data-bind="initTotal">1500</span>. There is no separate tenancy deposit. The last month’s rent is applied to the final month of the tenancy.</p>
 
-              <p>Rent is charged by whole calendar month and is not refunded pro-rata. If the Sub-Tenant(s) choose to leave part-way through a paid month, or leave before the end of the required 28 days’ notice period, the rent already paid for that month will remain payable in full.</p>
+                <p>Rent is charged by whole calendar month and is not refunded pro-rata. If the Sub-Tenant(s) choose to leave part-way through a paid month, or leave before the end of the required 28 days’ notice period, the rent already paid for that month will remain payable in full.</p>
 
-              <p>After departure at the end of the tenancy, reasonable charges for any damage beyond fair wear and tear, professional cleaning if required, or unpaid utilities may be recovered from rent paid in advance. Receipts or reasonable evidence will be provided for any such deductions, and any remaining balance will be returned to the Sub-Tenant(s).</p>
+                <p>After departure at the end of the tenancy, reasonable charges for any damage beyond fair wear and tear, professional cleaning if required, or unpaid utilities may be recovered from rent paid in advance. Receipts or reasonable evidence will be provided for any such deductions, and any remaining balance will be returned to the Sub-Tenant(s).</p>
 
-              <h4>5. Utilities and Council Tax</h4>
-              <p>Electricity and council tax will be split equally between the Tenant and the Sub-Tenant(s). These costs are in addition to rent and payable promptly when billed.</p>
+                <h4>5. Utilities and Council Tax</h4>
+                <p>Electricity and council tax will be split equally between the Tenant and the Sub-Tenant(s). These costs are in addition to rent and payable promptly when billed.</p>
 
-              <h4>6. Access to Facilities</h4>
-              <p>Access to the pool, gym, and sauna is included within the rent. Opening hours are 05:30 to 23:00 daily. House rules and further details are available at <a href="https://www.james-square.com" target="_blank" rel="noopener noreferrer">james-square.com</a>.</p>
+                <h4>6. Access to Facilities</h4>
+                <p>Access to the pool, gym, and sauna is included within the rent. Opening hours are 05:30 to 23:00 daily. House rules and further details are available at <a href="https://www.james-square.com" target="_blank" rel="noopener noreferrer">james-square.com</a>.</p>
 
-              <h4>7. Access and Privacy</h4>
-              <p>The Tenant will not access a Sub-Tenant’s private room without consent and at least 24 hours’ notice, except in emergencies such as fire, flood, or gas leak. The Sub-Tenant(s) will permit reasonable access for safety checks and repairs with at least 24 hours’ notice, emergencies excepted.</p>
+                <h4>7. Access and Privacy</h4>
+                <p>The Tenant will not access a Sub-Tenant’s private room without consent and at least 24 hours’ notice, except in emergencies such as fire, flood, or gas leak. The Sub-Tenant(s) will permit reasonable access for safety checks and repairs with at least 24 hours’ notice, emergencies excepted.</p>
 
-              <h4>8. Inventory and Condition</h4>
-              <p>An inventory for the room and shared areas will be completed at the start. The Sub-Tenant(s) have 7 days to raise discrepancies. On leaving, the room and shared areas must be clean and undamaged, allowing for fair wear and tear.</p>
+                <h4>8. Inventory and Condition</h4>
+                <p>An inventory for the room and shared areas will be completed at the start. The Sub-Tenant(s) have 7 days to raise discrepancies. On leaving, the room and shared areas must be clean and undamaged, allowing for fair wear and tear.</p>
 
-              <h4>9. House Rules</h4>
-              <ul>
-                <li>No smoking in the flat or communal internal areas.</li>
-                <li>Vaping is permitted if done considerately and with windows open.</li>
-                <li>No substance misuse or illegal drugs on the premises.</li>
-                <li>Keep shared areas tidy after use and dispose of rubbish and recycling correctly.</li>
-                <li>Be respectful towards the Tenant, neighbours, and residents. No antisocial behaviour.</li>
-                <li>No large gatherings or parties. Keep noise to reasonable levels, especially 22:00–07:00.</li>
-                <li>No pets without prior written consent from the Tenant.</li>
-                <li>Guests are permitted. Please communicate plans to the Tenant in advance for general awareness. No additional long-term occupiers without agreement.</li>
-                <li>Use the Wi-Fi/Internet for lawful purposes only. Do not download or share illegal or indecent content.</li>
-              </ul>
+                <h4>9. House Rules</h4>
+                <ul>
+                  <li>No smoking in the flat or communal internal areas.</li>
+                  <li>Vaping is permitted if done considerately and with windows open.</li>
+                  <li>No substance misuse or illegal drugs on the premises.</li>
+                  <li>Keep shared areas tidy after use and dispose of rubbish and recycling correctly.</li>
+                  <li>Be respectful towards the Tenant, neighbours, and residents. No antisocial behaviour.</li>
+                  <li>No large gatherings or parties. Keep noise to reasonable levels, especially 22:00–07:00.</li>
+                  <li>No pets without prior written consent from the Tenant.</li>
+                  <li>Guests are permitted. Please communicate plans to the Tenant in advance for general awareness. No additional long-term occupiers without agreement.</li>
+                  <li>Use the Wi-Fi/Internet for lawful purposes only. Do not download or share illegal or indecent content.</li>
+                </ul>
 
-              <h4>10. Reporting Issues</h4>
-              <p>Any issues, damages, safety concerns or maintenance needs must be reported first to the lead tenant, David Martin, who will immediately pass details to the managing / estate agent so that appropriate repairs or safety checks can be arranged.</p>
+                <h4>10. Reporting Issues</h4>
+                <p>Any issues, damages, safety concerns or maintenance needs must be reported first to the lead tenant, David Martin, who will immediately pass details to the managing / estate agent so that appropriate repairs or safety checks can be arranged.</p>
 
-              <h4>11. Repairs and Safety</h4>
-              <p>Report maintenance issues promptly. Do not tamper with smoke/heat alarms or any safety devices. Report faults immediately.</p>
+                <h4>11. Repairs and Safety</h4>
+                <p>Report maintenance issues promptly. Do not tamper with smoke/heat alarms or any safety devices. Report faults immediately.</p>
 
-              <p>The lead tenant will liaise with the managing / estate agent on all repair and safety matters. The landlord does not normally deal directly with the Sub-Tenant.</p>
+                <p>The lead tenant will liaise with the managing / estate agent on all repair and safety matters. The landlord does not normally deal directly with the Sub-Tenant.</p>
 
-              <h4>12. Ending the Agreement</h4>
-              <ul>
-                <li>Either party may end this Agreement by giving at least <span data-bind="notice">28 days</span> written notice. Four to six weeks’ notice is preferred where possible.</li>
-                <li>On leaving, return all keys/fobs and leave the room and shared areas clean and undamaged, allowing for fair wear and tear.</li>
-                <li>Rent is payable by full calendar month. Where the Sub-Tenant(s) choose to leave during a month that has already been paid for, no pro-rata refund of that month’s rent will be due.</li>
-              </ul>
+                <h4>12. Ending the Agreement</h4>
+                <ul>
+                  <li>Either party may end this Agreement by giving at least <span data-bind="notice">28 days</span> written notice. Four to six weeks’ notice is preferred where possible.</li>
+                  <li>On leaving, return all keys/fobs and leave the room and shared areas clean and undamaged, allowing for fair wear and tear.</li>
+                  <li>Rent is payable by full calendar month. Where the Sub-Tenant(s) choose to leave during a month that has already been paid for, no pro-rata refund of that month’s rent will be due.</li>
+                </ul>
 
-              <h4>13. Insurance</h4>
-              <p>Sub-Tenant(s) are responsible for insuring their own personal belongings and effects.</p>
+                <h4>13. Insurance</h4>
+                <p>Sub-Tenant(s) are responsible for insuring their own personal belongings and effects.</p>
 
-              <h4>14. Data Protection</h4>
-              <p>Basic contact and tenancy details will be held by the Tenant and shared with the landlord/agent only where this is necessary for legitimate tenancy or property management purposes.</p>
+                <h4>14. Data Protection</h4>
+                <p>Basic contact and tenancy details will be held by the Tenant and shared with the landlord/agent only where this is necessary for legitimate tenancy or property management purposes.</p>
 
-              <h4>15. General</h4>
-              <p>This Agreement constitutes the entire understanding between the parties and supersedes prior agreements. Any amendments must be in writing and signed by both parties. This Agreement is governed by the laws of Scotland. The parties will attempt to resolve disputes amicably before formal action.</p>
+                <h4>15. General</h4>
+                <p>This Agreement constitutes the entire understanding between the parties and supersedes prior agreements. Any amendments must be in writing and signed by both parties. This Agreement is governed by the laws of Scotland. The parties will attempt to resolve disputes amicably before formal action.</p>
 
-              <p>The landlord and managing agent are not parties to this Sub-Tenancy Agreement. Day-to-day issues and communications under this Agreement are between the lead tenant and the Sub-Tenant(s), except where the law requires the landlord or managing agent to become involved.</p>
+                <p>The landlord and managing agent are not parties to this Sub-Tenancy Agreement. Day-to-day issues and communications under this Agreement are between the lead tenant and the Sub-Tenant(s), except where the law requires the landlord or managing agent to become involved.</p>
 
-              <div class="divider"></div>
+                <div class="divider"></div>
 
-              <h4>Acceptance</h4>
-              <p>By signing below, the Sub-Tenant(s) confirm they have read and understood this Agreement, agree to pay £<span data-bind="initTotal">1500</span> upfront (first and last month’s rent, with no separate deposit), then £<span data-bind="rent">750</span> on or before the <span data-bind="rentDayOrdinal">[Due Day]</span> of each month, agree to split utilities and council tax equally, will follow the house rules, and will provide at least 28 days’ written notice before ending the tenancy.</p>
+                <h4>Acceptance</h4>
+                <p>By signing below, the Sub-Tenant(s) confirm they have read and understood this Agreement, agree to pay £<span data-bind="initTotal">1500</span> upfront (first and last month’s rent, with no separate deposit), then £<span data-bind="rent">750</span> on or before the <span data-bind="rentDayOrdinal">[Due Day]</span> of each month, agree to split utilities and council tax equally, will follow the house rules, and will provide at least 28 days’ written notice before ending the tenancy.</p>
 
-              <div class="signing" id="signingSubs"></div>
+                <div class="signing" id="signingSubs"></div>
 
-              <div class="signing">
-                <div class="sig-block">
-                  <p><strong>Lead Tenant:</strong> <span data-bind="tenantName">David Martin</span></p>
-                  <img id="imgTenant" class="sig-img" alt="Lead tenant signature">
-                  <div class="sig-line"></div>
-                  <div class="printed-name">Printed name: <span data-bind="tenantName">David Martin</span></div>
-                  <p class="stamp">Signed and dated: <span id="stampTenant">[Signature and UK timestamp]</span></p>
+                <div class="signing">
+                  <div class="sig-block">
+                    <p><strong>Lead Tenant:</strong> <span data-bind="tenantName">David Martin</span></p>
+                    <img id="imgTenant" class="sig-img" alt="Lead tenant signature">
+                    <div class="sig-line"></div>
+                    <div class="printed-name">Printed name: <span data-bind="tenantName">David Martin</span></div>
+                    <p class="stamp">Signed and dated: <span id="stampTenant">[Signature and UK timestamp]</span></p>
+                  </div>
+                  <div class="sig-block">
+                    <p><strong>Witness (optional):</strong> <span id="bindWitName">[Witness]</span></p>
+                    <img id="imgWit" class="sig-img" alt="Witness signature">
+                    <div class="sig-line"></div>
+                    <div class="printed-name">Printed name: <span id="bindWitName2">[Witness]</span></div>
+                    <p class="stamp">Signed and dated: <span id="stampWit">[Signature and UK timestamp]</span></p>
+                  </div>
                 </div>
-                <div class="sig-block">
-                  <p><strong>Witness (optional):</strong> <span id="bindWitName">[Witness]</span></p>
-                  <img id="imgWit" class="sig-img" alt="Witness signature">
-                  <div class="sig-line"></div>
-                  <div class="printed-name">Printed name: <span id="bindWitName2">[Witness]</span></div>
-                  <p class="stamp">Signed and dated: <span id="stampWit">[Signature and UK timestamp]</span></p>
-                </div>
-              </div>
+              </section>
             </section>
           </aside>
         </div>
@@ -274,7 +276,7 @@
         <div class="toolbar toolbar-bottom">
           <a class="btn link" id="btnScrollTop" href="#top">Back to form</a>
           <button class="btn" id="btnEmailBottom" type="button">Email David</button>
-          <button class="btn primary" id="btnPrint2" type="button">Export as PDF</button>
+          <button class="btn primary" id="export-pdf-button" type="button">Export as PDF</button>
           <a class="btn" href="index.html">Home</a>
         </div>
 

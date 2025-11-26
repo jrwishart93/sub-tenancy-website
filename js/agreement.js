@@ -682,10 +682,15 @@ $('btnPrint')?.addEventListener('click', () => {
   prepareForPrint();
   window.print();
 });
-$('btnPrint2')?.addEventListener('click', () => {
-  bindAgreement();
-  prepareForPrint();
-  window.print();
+document.addEventListener('DOMContentLoaded', () => {
+  const exportBtn = document.getElementById('export-pdf-button');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      bindAgreement();
+      prepareForPrint();
+      window.print();
+    });
+  }
 });
 
 $('btnEmail')?.addEventListener('click', emailDavid);
@@ -780,7 +785,7 @@ window.handleGenerate = () => {
 };
 
 window.handlePrint = () => {
-  const printButton = $('btnPrint') || $('btnPrint2');
+  const printButton = $('btnPrint') || document.getElementById('export-pdf-button');
   printButton?.click();
 };
 

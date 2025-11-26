@@ -55,9 +55,6 @@ const debounce = (fn, wait = 300) => {
 };
 
 const FORM_KEY = 'tenancyForm_v4';
-const SIG_KEYS = {
-  tenant: 'sig_tenant',
-};
 const MAX_SUBS = 1;
 const els = {
   agreementDate: $('agreementDate'),
@@ -72,8 +69,6 @@ const els = {
   subTenantSignature: $('subTenantSignature'),
   subTenantSignatureDate: $('subTenantSignatureDate'),
   acceptancePreview: $('acceptancePreview'),
-  imgTenant: $('imgTenant'),
-  stampTenant: $('stampTenant'),
   errAgreementDate: $('errAgreementDate'),
   errSignatureDate: $('errSignatureDate'),
   errMoveInDate: $('errMoveInDate'),
@@ -556,9 +551,7 @@ function bindAgreement() {
     <p><strong>Acceptance</strong></p>
     <p>By signing below, the parties agree to the terms of this Sub-Tenancy Agreement.</p>
     <p><strong>Lead tenant signature:</strong><br>
-      <span style="font-family: 'Dancing Script', cursive; font-size: 2rem;">
-        ${leadTenantSignature}
-      </span>
+      <span class="signature-text">${leadTenantSignature}</span>
     </p>
     <p><strong>Sub-Tenant:</strong> ${subTenantName || '_________________'}</p>
     <p><strong>Sub-Tenant signature:</strong> ${subTenantSignature || ''}</p>
@@ -588,7 +581,6 @@ function prepareForPrint() {
       img.style.display = 'none';
     }
   });
-  tenantSig?.applyToImage();
 }
 
 const formatEmailDate = (value) => {
@@ -753,21 +745,6 @@ $('btnEmail')?.addEventListener('click', emailDavid);
 $('btnEmailBottom')?.addEventListener('click', emailDavid);
 $('btnClear')?.addEventListener('click', clearForm);
 $('btnScrollTop')?.addEventListener('click', scrollToTop);
-
-const tenantSig = createSignaturePad({
-  canvasId: 'sigTenant',
-  timeSpanId: 'sigTenantTime',
-  stampOutputId: 'stampTenant',
-  storageKey: SIG_KEYS.tenant,
-  imgId: 'imgTenant',
-});
-
-tenantSig?.loadFromStorage();
-
-$('sigTenantClear')?.addEventListener('click', () => tenantSig?.clearSig());
-$('sigTenantStamp')?.addEventListener('click', () => tenantSig?.stamp());
-
-handleUpload($('sigTenantUpload'), els.imgTenant, SIG_KEYS.tenant);
 
 window.addEventListener('beforeprint', () => {
   bindAgreement();

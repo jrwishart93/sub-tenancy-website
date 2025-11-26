@@ -63,13 +63,13 @@ label {
   display: block;
 }
 
-.signature-display {
+.signature-text {
   font-family: 'Dancing Script', cursive;
-  font-size: 2.2rem;
-  letter-spacing: 1px;
-  padding: 6px 0;
+  font-size: 2rem;
   color: #111;
   user-select: none;
+  letter-spacing: 1px;
+  padding: 4px 0;
 }
 
 input[type="text"],
@@ -746,8 +746,9 @@ button:active,
     page-break-inside: avoid;
   }
 
-  .signature-display {
+  .signature-text {
     font-family: 'Dancing Script', cursive !important;
-    font-size: 2.2rem !important;
+    font-size: 2rem !important;
+    color: #000 !important;
   }
 }

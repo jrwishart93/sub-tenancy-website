@@ -54,6 +54,122 @@ const debounce = (fn, wait = 300) => {
   };
 };
 
+function getMoveInDate() {
+  const moveInInput = document.getElementById('moveInDate');
+  if (!moveInInput || !moveInInput.value) return null;
+  const [year, month, day] = moveInInput.value.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function getFirstReminderStartDate() {
+  const moveIn = getMoveInDate();
+  const todayDate = new Date();
+  const base = moveIn || todayDate;
+
+  let year = base.getFullYear();
+  let month = base.getMonth();
+  const day = base.getDate();
+
+  if (day > 1) {
+    month += 1;
+    if (month > 11) {
+      month = 0;
+      year += 1;
+    }
+  }
+
+  return new Date(year, month, 1, 9, 0, 0);
+}
+
+function toICalDateTimeLocal(date) {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  const hh = String(date.getHours()).padStart(2, '0');
+  const min = String(date.getMinutes()).padStart(2, '0');
+  const ss = String(date.getSeconds()).padStart(2, '0');
+  return `${yyyy}${mm}${dd}T${hh}${min}${ss}`;
+}
+
+function downloadRentReminderICS() {
+  const subTenantName = document.getElementById('subTenantName')?.value || 'Sub-Tenant';
+  const rentAmountInput = document.getElementById('rent');
+  const rentAmount = rentAmountInput?.value ? `£${rentAmountInput.value}` : '£750';
+
+  const start = getFirstReminderStartDate();
+  const dtStart = toICalDateTimeLocal(start);
+  const now = new Date();
+  const dtStamp = toICalDateTimeLocal(now);
+
+  const summary = `Rent payment due – ${subTenantName}`;
+  const description = `Monthly rent of ${rentAmount} is due today to David Martin.`;
+
+  const icsContent = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//James Square//Sub-Tenancy Rent Reminder//EN',
+    'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    `UID:rent-reminder-${now.getTime()}@james-square.com`,
+    `DTSTAMP:${dtStamp}`,
+    `SUMMARY:${summary}`,
+    `DESCRIPTION:${description}`,
+    `DTSTART:${dtStart}`,
+    'RRULE:FREQ=MONTHLY;BYMONTHDAY=1',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+
+  const blob = new Blob([icsContent], {
+    type: 'text/calendar;charset=utf-8',
+  });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'rent-reminder.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function openGoogleCalendarReminder() {
+  const subTenantName = document.getElementById('subTenantName')?.value || 'Sub-Tenant';
+  const rentAmountInput = document.getElementById('rent');
+  const rentAmount = rentAmountInput?.value ? `£${rentAmountInput.value}` : '£750';
+
+  const start = getFirstReminderStartDate();
+
+  const end = new Date(start.getTime() + 30 * 60 * 1000);
+
+  const formatForGoogle = (date) => {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const hh = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const ss = '00';
+    return `${yyyy}${mm}${dd}T${hh}${min}${ss}`;
+  };
+
+  const startStr = formatForGoogle(start);
+  const endStr = formatForGoogle(end);
+
+  const text = `Rent payment due – ${subTenantName}`;
+  const details = `Monthly rent of ${rentAmount} is due today to David Martin. This event repeats on the 1st of each month.`;
+  const recur = 'RRULE:FREQ=MONTHLY;BYMONTHDAY=1';
+
+  const url = new URL('https://calendar.google.com/calendar/render');
+  url.searchParams.set('action', 'TEMPLATE');
+  url.searchParams.set('text', text);
+  url.searchParams.set('details', details);
+  url.searchParams.set('dates', `${startStr}/${endStr}`);
+  url.searchParams.set('recur', recur);
+
+  window.open(url.toString(), '_blank', 'noopener');
+}
+
 const FORM_KEY = 'tenancyForm_v4';
 const MAX_SUBS = 1;
 const els = {
@@ -739,6 +855,33 @@ document.addEventListener('DOMContentLoaded', () => {
       bindAgreement();
       prepareForPrint();
       window.print();
+    });
+  }
+
+  const googleBtn = document.getElementById('googleCalendarReminder');
+  const appleBtn = document.getElementById('appleCalendarReminder');
+  const confirmPreviewExists = () => {
+    const previewHtml = document.getElementById('agreement-preview')?.innerHTML || '';
+    if (!previewHtml.trim()) {
+      const ok = confirm(
+        'You have not generated the agreement preview yet. Continue to create a rent reminder anyway?',
+      );
+      if (!ok) return false;
+    }
+    return true;
+  };
+
+  if (googleBtn) {
+    googleBtn.addEventListener('click', () => {
+      if (!confirmPreviewExists()) return;
+      openGoogleCalendarReminder();
+    });
+  }
+
+  if (appleBtn) {
+    appleBtn.addEventListener('click', () => {
+      if (!confirmPreviewExists()) return;
+      downloadRentReminderICS();
     });
   }
 });

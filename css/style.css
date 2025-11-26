@@ -63,6 +63,15 @@ label {
   display: block;
 }
 
+.signature-display {
+  font-family: 'Dancing Script', cursive;
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  padding: 6px 0;
+  color: #111;
+  user-select: none;
+}
+
 input[type="text"],
 input[type="date"],
 input[type="email"],
@@ -735,5 +744,10 @@ button:active,
   #agreement-preview p,
   #agreement-preview li {
     page-break-inside: avoid;
+  }
+
+  .signature-display {
+    font-family: 'Dancing Script', cursive !important;
+    font-size: 2.2rem !important;
   }
 }

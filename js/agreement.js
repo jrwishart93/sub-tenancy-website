@@ -460,7 +460,7 @@ function saveForm() {
       moveInDate: els.moveInDate?.value,
       rent: els.rent?.value,
       rentDueDate: els.rentDueDate?.value,
-      leadTenantSignature: els.leadTenantSignature?.value,
+      leadTenantSignature: els.leadTenantSignature?.textContent,
       subTenantName: els.subTenantName?.value,
       subTenantSignature: els.subTenantSignature?.value,
       subTenantSignatureDate: els.subTenantSignatureDate?.value,
@@ -504,7 +504,7 @@ function loadForm() {
     if (data.rent && els.rent) els.rent.value = data.rent;
     if (els.rentDueDate) els.rentDueDate.value = '1';
     if (els.leadTenantSignature) {
-      els.leadTenantSignature.value = data.leadTenantSignature || 'David Martin';
+      els.leadTenantSignature.textContent = data.leadTenantSignature || 'David Martin';
     }
     if (els.subTenantName) els.subTenantName.value = data.subTenantName || '';
     if (els.subTenantSignature) els.subTenantSignature.value = data.subTenantSignature || '';
@@ -548,13 +548,24 @@ function bindAgreement() {
   const initTotal = rent * 2;
   setBind('initTotal', initTotal ? String(initTotal) : '0');
 
-  const leadTenantSignature = els.leadTenantSignature?.value || 'David Martin';
+  const leadTenantSignature = els.leadTenantSignature?.textContent?.trim() || 'David Martin';
   const subTenantName = els.subTenantName?.value.trim() || '';
   const subTenantSignature = els.subTenantSignature?.value.trim() || '';
   const subTenantSignatureDate = els.subTenantSignatureDate?.value || '';
-  const acceptanceBlock = `Acceptance\nBy signing below, the parties agree to the terms of this Sub-Tenancy Agreement.\n\nLead tenant: ${leadTenantSignature}\nSub-Tenant: ${subTenantName || '_________________'}\n\nSub-Tenant signature: ${subTenantSignature || ''}\nSub-Tenant signature date: ${subTenantSignatureDate || ''}`;
+  const acceptanceBlock = `
+    <p><strong>Acceptance</strong></p>
+    <p>By signing below, the parties agree to the terms of this Sub-Tenancy Agreement.</p>
+    <p><strong>Lead tenant signature:</strong><br>
+      <span style="font-family: 'Dancing Script', cursive; font-size: 2rem;">
+        ${leadTenantSignature}
+      </span>
+    </p>
+    <p><strong>Sub-Tenant:</strong> ${subTenantName || '_________________'}</p>
+    <p><strong>Sub-Tenant signature:</strong> ${subTenantSignature || ''}</p>
+    <p><strong>Sub-Tenant signature date:</strong> ${subTenantSignatureDate || ''}</p>
+  `;
   if (els.acceptancePreview) {
-    els.acceptancePreview.textContent = acceptanceBlock;
+    els.acceptancePreview.innerHTML = acceptanceBlock;
   }
 
   subs.forEach((sub, idx) => {
@@ -649,7 +660,7 @@ function clearForm() {
   if (els.moveInDate) els.moveInDate.value = '2025-11-29';
   if (els.rent) els.rent.value = '750';
   if (els.rentDueDate) els.rentDueDate.value = '1';
-  if (els.leadTenantSignature) els.leadTenantSignature.value = 'David Martin';
+  if (els.leadTenantSignature) els.leadTenantSignature.textContent = 'David Martin';
   if (els.subTenantName) els.subTenantName.value = '';
   if (els.subTenantSignature) els.subTenantSignature.value = '';
   if (els.subTenantSignatureDate) els.subTenantSignatureDate.value = '';
@@ -669,7 +680,6 @@ function scrollToTop(e) {
   'moveInDate',
   'rent',
   'rentDueDate',
-  'leadTenantSignature',
   'subTenantName',
   'subTenantSignature',
   'subTenantSignatureDate',

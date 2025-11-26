@@ -455,6 +455,20 @@ const configureTimestamp = (state) => {
   timeEl.textContent = text;
 };
 
+const clearSignatureState = (state) => {
+  if (!state?.canvas || !state?.context) return;
+  const ratio = state.ratio || 1;
+  const width = state.canvas.width / ratio;
+  const height = state.canvas.height / ratio;
+  state.context.clearRect(0, 0, width, height);
+  state.image = null;
+  state.timestamp = null;
+  configureTimestamp(state);
+  if (storageAvailable && state.storageKey) {
+    window.localStorage.removeItem(state.storageKey);
+  }
+};
+
 const initSignaturePad = (id) => {
   const canvas = document.getElementById(id);
   if (!canvas) return;
@@ -627,6 +641,11 @@ const initSignaturePad = (id) => {
 
 ['sigSub0'].forEach(initSignaturePad);
 
+const resetSignatures = () => {
+  Object.values(signatureStates).forEach((state) => clearSignatureState(state));
+  updateSignaturePreview();
+};
+
 const exportButton = document.getElementById('exportPdf');
 const previewContainer = document.getElementById('preview');
 
@@ -680,6 +699,45 @@ const refreshState = () => {
 applyStoredForm();
 refreshState();
 
+const resetFormFields = () => {
+  Object.values(fieldElements).forEach((field) => {
+    if (!field) return;
+    field.removeAttribute('aria-invalid');
+    field.style.borderColor = '';
+    if (field.type === 'checkbox') {
+      field.checked = false;
+    } else {
+      field.value = '';
+    }
+  });
+};
+
+const clearFieldErrors = () => {
+  Object.values(errorElements).forEach((error) => {
+    if (error) {
+      error.textContent = '';
+    }
+  });
+};
+
+const clearFormAndStorage = () => {
+  resetFormFields();
+  clearFieldErrors();
+  touchedFields.clear();
+  currentFormData = {};
+
+  if (storageAvailable) {
+    window.localStorage.removeItem(FORM_STORAGE_KEY);
+    Object.values(SIGNATURE_KEYS).forEach((key) => {
+      window.localStorage.removeItem(key);
+    });
+  }
+
+  resetSignatures();
+  applyStoredForm();
+  refreshState();
+};
+
 const markTouched = (fieldName) => {
   touchedFields.add(fieldName);
 };
@@ -727,6 +785,15 @@ toSignButton?.addEventListener('click', goToSign);
 const backToDetailsButton = document.getElementById('backToDetails');
 backToDetailsButton?.addEventListener('click', () => {
   showTab('agreement');
+});
+
+const clearFormButton = document.getElementById('clearFormButton');
+clearFormButton?.addEventListener('click', () => {
+  const confirmed = window.confirm(
+    'Clear all entered details, saved signatures, and stored progress?'
+  );
+  if (!confirmed) return;
+  clearFormAndStorage();
 });
 
 tabs.forEach((tab) => {

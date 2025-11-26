@@ -745,14 +745,47 @@ emailButton?.addEventListener('click', () => {
       }`
     : currentFormData.subTenantName || 'New sub-tenant';
   const subject = encodeURIComponent(`Sub-Tenancy Agreement — ${names}`);
+  const agreementDate = currentFormData.agreementDate
+    ? formatDateUK(currentFormData.agreementDate)
+    : '[date]';
   const start = currentFormData.startDate
     ? formatDateUK(currentFormData.startDate)
-    : 'TBC';
+    : '[start date]';
   const due = currentFormData.rentDueDay
     ? ordinal(currentFormData.rentDueDay)
-    : 'TBC';
+    : '[Due Day]';
+
+  const partiesSection = `This Sub-Tenancy Agreement (“the Agreement”) is made on ${agreementDate} between:\n1. David Martin (“the Tenant” or “lead tenant”), the primary tenant and current occupier who rents the property from the landlord through Milard’s Property Management and has written permission to sub-let one room in the property; and\n2. ${names} (“the Sub-Tenant”).`;
+
+  const initialPaymentsSection = `Initial Payments (no deposit):\n- The Sub-Tenant(s) agree to pay first and last month’s rent upfront on signing. The initial total is £1500. There is no separate tenancy deposit. The last month’s rent is applied to the final month of the tenancy.\n- Rent is charged by whole calendar month and is not refunded pro-rata. If the Sub-Tenant(s) choose to leave part-way through a paid month, or leave before the end of the required 28 days’ notice period, the rent already paid for that month will remain payable in full.\n- After departure at the end of the tenancy, reasonable charges for any damage beyond fair wear and tear, professional cleaning if required, or unpaid utilities may be recovered from rent paid in advance. Receipts or reasonable evidence will be provided for any such deductions, and any remaining balance will be returned to the Sub-Tenant(s).`;
+
+  const endingSection = `Ending the Agreement:\n- Either party may end this Agreement by giving at least 28 days written notice. Four to six weeks’ notice is preferred where possible.\n- On leaving, return all keys/fobs and leave the room and shared areas clean and undamaged, allowing for fair wear and tear.\n- Rent is payable by full calendar month. Where the Sub-Tenant(s) choose to leave during a month that has already been paid for, no pro-rata refund of that month’s rent will be due.`;
+
+  const generalSection = `General:\n- This Agreement constitutes the entire understanding between the parties and supersedes prior agreements. Any amendments must be in writing and signed by both parties. This Agreement is governed by the laws of Scotland. The parties will attempt to resolve disputes amicably before formal action.\n- The landlord and managing agent are not parties to this Sub-Tenancy Agreement. Day-to-day issues and communications under this Agreement are between the lead tenant and the Sub-Tenant(s), except where the law requires the landlord or managing agent to become involved.`;
+
   const body = encodeURIComponent(
-    `Hello David,%0D%0A%0D%0AKey agreement details:%0D%0A• Start date: ${start}%0D%0A• Monthly rent: £750%0D%0A• Rent due day: ${due}%0D%0A%0D%0AThank you,%0D%0A${currentFormData.subTenantName || 'Sub-tenant'}`
+    `Hello David,
+
+The sub-tenancy agreement is completed for ${names}.
+
+Property: Flat 1, 61 Caledonian Crescent, Edinburgh
+Agreement date: ${agreementDate}
+Start Date: ${start}
+Monthly Rent: £750
+Rent Due Day: ${due}
+
+${partiesSection}
+
+${initialPaymentsSection}
+
+${endingSection}
+
+${generalSection}
+
+I’ve attached the PDF (or will send it next).
+
+Thank you,
+${currentFormData.subTenantName || 'Sub-tenant'}`
   );
   window.location.href = `mailto:david.martin.1296@gmail.com?subject=${subject}&body=${body}`;
 });

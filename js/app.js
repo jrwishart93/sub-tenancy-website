@@ -365,6 +365,25 @@ const applyStoredForm = () => {
 
 const signatureStates = {};
 
+const DAVID_SIGNATURE_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 140">
+      <style>
+        text { font-family: "Brush Script MT", "Segoe Script", cursive; font-size: 48px; fill: #0b3d91; }
+        path { stroke: #0b3d91; stroke-width: 3; fill: none; }
+      </style>
+      <text x="16" y="86">David Martin</text>
+      <path d="M18 98 C 80 120, 140 120, 210 102" />
+    </svg>`
+)}
+`;
+
+const DAVID_SIGNATURE_TIMESTAMP = 'Signed on 14 November 2024 (UK time)';
+
+signatureStates.sigTenant = {
+  image: DAVID_SIGNATURE_IMAGE,
+  timestamp: DAVID_SIGNATURE_TIMESTAMP,
+};
+
 const drawImageToCanvas = (canvas, context, dataUrl, ratio) => {
   if (!dataUrl) {
     const width = canvas.width / ratio;
@@ -614,7 +633,7 @@ const initSignaturePad = (id) => {
   signatureStates[id] = state;
 };
 
-['sigSub0', 'sigTenant', 'sigWitness'].forEach(initSignaturePad);
+['sigSub0', 'sigWitness'].forEach(initSignaturePad);
 
 const exportButton = document.getElementById('exportPdf');
 const previewContainer = document.getElementById('preview');

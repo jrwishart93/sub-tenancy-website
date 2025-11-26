@@ -742,7 +742,138 @@ tabs.forEach((tab) => {
 });
 
 const emailAgreementButton = document.getElementById('sendAgreementEmail');
-const getPreviewHtml = () => previewContainer?.outerHTML ?? '';
+
+const buildAgreementEmailBody = () => {
+  const subTenantName = fieldElements.subTenantName?.value?.trim() || '[Sub-Tenant Name]';
+  const subTenantEmail = fieldElements.subTenantEmail?.value?.trim() || '';
+  const subTenantPhone = document.getElementById('subTenantPhone')?.value?.trim() || '';
+  const agreementDateValue = fieldElements.agreementDate?.value || '';
+  const moveInDateValue = fieldElements.startDate?.value || '';
+  const rentAmount = '£750';
+  const rentDueDay = currentFormData.rentDueDay
+    ? `${ordinal(currentFormData.rentDueDay)} of each month`
+    : '1st of each month';
+
+  const agreementHtml = previewContainer?.outerHTML || '';
+
+  const agreementDatePretty = formatDateUK(agreementDateValue) || '[Agreement Date]';
+  const moveInDatePretty = formatDateUK(moveInDateValue) || '[Move-In Date]';
+
+  return `
+  <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.5; color: #111827;">
+    <p>Hello David,</p>
+
+    <p>
+      The Sub-Tenancy Agreement has now been completed for <strong>${subTenantName}</strong>. 
+      Please find the full details below for your records.
+    </p>
+
+    <p>
+      <strong>Property:</strong> Flat 1, 61 Caledonian Crescent, Edinburgh<br/>
+      <strong>Agreement Date:</strong> ${agreementDatePretty}<br/>
+      <strong>Start Date:</strong> ${moveInDatePretty}<br/>
+      <strong>Monthly Rent:</strong> ${rentAmount}<br/>
+      <strong>Rent Due Day:</strong> ${rentDueDay}
+    </p>
+
+    <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+    <h3 style="margin: 0 0 10px; font-size: 1.1rem;">Agreement Summary</h3>
+
+    <p>
+      This Sub-Tenancy Agreement (“the Agreement”) is made on <strong>${agreementDatePretty}</strong> between:
+    </p>
+
+    <ol style="padding-left: 20px;">
+      <li>
+        <strong>David Martin</strong> (“the Tenant” or “lead tenant”), the primary tenant and current occupier who 
+        rents the property from the landlord through Milard’s Property Management, and who has written permission 
+        to sub-let one room within the property; and
+      </li>
+      <li>
+        <strong>${subTenantName}</strong> (“the Sub-Tenant”).
+      </li>
+    </ol>
+
+    <h4 style="margin: 16px 0 6px; font-size: 1rem;">Initial Payments (No Deposit)</h4>
+    <p>
+      The Sub-Tenant agrees to an initial total of <strong>£1500</strong>, paid as two instalments:
+    </p>
+    <ul style="padding-left: 18px; margin-top: 4px;">
+      <li><strong>${rentAmount}</strong> on the move-in date (<strong>${moveInDatePretty}</strong>); and</li>
+      <li><strong>${rentAmount}</strong> scheduled for the next rent due day (1st of the following month).</li>
+    </ul>
+    <p>
+      No separate tenancy deposit is required. The final month’s rent is covered by the second instalment.
+    </p>
+    <p>
+      Rent is charged per full calendar month and is not refunded pro-rata. If the Sub-Tenant leaves part-way through a 
+      paid month, or leaves before the required notice period has elapsed, the rent for that month remains due in full.
+    </p>
+    <p>
+      After the tenancy ends, reasonable charges may be made for damage beyond fair wear and tear, professional cleaning 
+      if needed, or unpaid utilities. Any deductions will be supported by receipts or reasonable evidence, and any 
+      remaining balance will be returned to the Sub-Tenant.
+    </p>
+
+    <h4 style="margin: 16px 0 6px; font-size: 1rem;">Ending the Agreement</h4>
+    <p>
+      Either party may end this Agreement by giving a minimum of <strong>28 days’ written notice</strong>. 
+      Four to six weeks’ notice is preferred where possible.
+    </p>
+    <p>
+      The Sub-Tenant must return all keys/fobs and leave both the room and shared areas clean, tidy and undamaged, 
+      allowing for fair wear and tear. Rent remains payable in full months only. Where a departure occurs mid-month, 
+      no pro-rata refund is due.
+    </p>
+
+    <h4 style="margin: 16px 0 6px; font-size: 1rem;">General Provisions</h4>
+    <p>
+      This Agreement sets out the full understanding between both parties and replaces any previous discussions or 
+      informal arrangements. Any amendments must be made in writing and agreed by both the lead tenant and the Sub-Tenant.
+    </p>
+    <p>
+      This Agreement is governed by the laws of Scotland. Both parties will attempt to resolve any disputes amicably 
+      before taking further action.
+    </p>
+    <p>
+      The landlord and managing agent are not parties to this Agreement. All day-to-day issues, communications and 
+      arrangements are between David Martin and the Sub-Tenant, except where legal obligations require the landlord 
+      or agent to be informed.
+    </p>
+
+    <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+    <h4 style="margin: 0 0 8px; font-size: 1rem;">Digital Signing Statement</h4>
+    <p>
+      By sending this email, I confirm that:
+    </p>
+    <ul style="padding-left: 18px; margin-top: 4px;">
+      <li>I have reviewed the Sub-Tenancy Agreement in full;</li>
+      <li>All details provided are accurate to the best of my knowledge; and</li>
+      <li><strong>I agree to the terms and conditions set out in the Agreement.</strong></li>
+    </ul>
+    <p>
+      <strong>Digital signature captured in attached PDF.</strong>
+    </p>
+
+    <p style="margin-top: 18px;">
+      The full Agreement is included below in HTML format for reference:
+    </p>
+
+    <div style="margin-top: 12px; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb; background: #f9fafb;">
+      ${agreementHtml}
+    </div>
+
+    <p style="margin-top: 20px;">
+      Thank you,<br/>
+      <strong>${subTenantName}</strong><br/>
+      ${subTenantEmail ? `${subTenantEmail}<br/>` : ''}
+      ${subTenantPhone || ''}
+    </p>
+  </div>
+  `;
+};
 
 emailAgreementButton?.addEventListener('click', async () => {
   const formValid = ensureFormValidityForActions();
@@ -760,14 +891,19 @@ emailAgreementButton?.addEventListener('click', async () => {
     return;
   }
 
-  const previewHtml = getPreviewHtml();
-  if (!previewHtml) {
-    alert('Unable to find the agreement preview.');
+  const agreementPreview = previewContainer?.innerHTML || '';
+  if (!agreementPreview.trim()) {
+    alert('Please generate the agreement preview before emailing.');
     return;
   }
 
-  const subjectName = currentFormData.subTenantName || 'Sub-tenant';
-  const subject = `Your Sub-Tenancy Agreement – ${subjectName}`;
+  const emailBodyHtml = buildAgreementEmailBody();
+  if (!emailBodyHtml) {
+    alert('Please generate the agreement preview before emailing.');
+    return;
+  }
+
+  const subject = 'Completed Sub-Tenancy Agreement for Flat 1, 61 Caledonian Crescent';
 
   emailAgreementButton.disabled = true;
   emailAgreementButton.setAttribute('aria-busy', 'true');
@@ -776,7 +912,7 @@ emailAgreementButton?.addEventListener('click', async () => {
     const response = await fetch('/api/send-agreement', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to: emailAddress, subject, html: previewHtml }),
+      body: JSON.stringify({ to: emailAddress, subject, html: emailBodyHtml }),
     });
 
     if (!response.ok) {

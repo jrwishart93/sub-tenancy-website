@@ -10,99 +10,100 @@
   <script type="module" src="./js/firebase-init.js"></script>
 </head>
 <body id="top">
-  <header class="page-header" role="banner">
-    <div class="page-header__inner">
-      <a class="page-header__logo" href="index.html" aria-label="Return to sub-tenancy home">
-        <img src="assets/front61.png" alt="Number 61 front door logo" class="header-logo">
-      </a>
-      <div class="page-header__titles" style="flex:1 1 auto;">
-        <h1>Sub-Tenancy Agreement</h1>
-        <p class="subtitle">Property: Flat 1, 61 Caledonian Crescent, Edinburgh • Lead tenant: David Martin • Managing agent: Milard’s Property Management</p>
+  <div class="page">
+    <header class="page-header" role="banner">
+      <div class="page-header__inner">
+        <a class="page-header__logo" href="index.html" aria-label="Return to sub-tenancy home">
+          <img src="assets/front61.png" alt="Number 61 front door logo" class="header-logo">
+        </a>
+        <div class="page-header__titles" style="flex:1 1 auto;">
+          <h1>Sub-Tenancy Agreement</h1>
+          <p class="subtitle">Property: Flat 1, 61 Caledonian Crescent, Edinburgh • Lead tenant: David Martin • Managing agent: Milard’s Property Management</p>
+        </div>
+        <span id="saveIndicator" class="save-indicator" aria-live="polite"></span>
       </div>
-      <span id="saveIndicator" class="save-indicator" aria-live="polite"></span>
-    </div>
-  </header>
+    </header>
 
-  <main>
-    <div class="page-container">
-      <nav class="glass-nav" aria-label="Agreement navigation">
-        <a href="#details" aria-current="true">Details</a>
-        <a href="#subtenants">Sub-tenants</a>
-        <a href="#signatures">Signatures</a>
-        <a href="#preview">Preview</a>
-      </nav>
+    <main>
+      <div class="page-container">
+        <nav class="tabs" aria-label="Agreement navigation">
+          <a class="tab-button" href="#details" aria-current="true">Details</a>
+          <a class="tab-button" href="#subtenants">Sub-tenants</a>
+          <a class="tab-button" href="#signatures">Signatures</a>
+          <a class="tab-button" href="#preview">Preview</a>
+        </nav>
 
-      <div class="banner tip" role="note">
-        💡 Tip: Export as PDF from your browser’s print dialog, then click “Email David” to open a draft email.
-      </div>
+        <div class="banner tip" role="note">
+          💡 Tip: Export as PDF from your browser’s print dialog, then click “Email David” to open a draft email.
+        </div>
 
-      <form id="agreementForm" novalidate>
-        <div class="form-layout" aria-label="Agreement builder layout">
-          <div class="form-column" aria-label="Agreement form">
-            <section id="details" class="card" aria-labelledby="section-details">
-              <h2 id="section-details">Parties and Tenancy Details</h2>
-              <div class="hr"></div>
+        <form id="agreementForm" novalidate>
+          <div class="form-layout" aria-label="Agreement builder layout">
+            <div class="form-column" aria-label="Agreement form">
+              <section id="details" class="card form-section" aria-labelledby="section-details">
+                <h2 id="section-details">Parties and Tenancy Details</h2>
+                <div class="hr"></div>
 
-              <div class="row">
-                <div>
-                  <label for="agreeDate" class="required">Date of Agreement</label>
-                  <input id="agreeDate" type="date" aria-required="true" aria-describedby="errAgreeDate">
-                  <div id="errAgreeDate" class="error" role="alert">Please provide the agreement date.</div>
+                <div class="row">
+                  <div class="form-field">
+                    <label for="agreeDate" class="required">Date of Agreement</label>
+                    <input id="agreeDate" type="date" aria-required="true" aria-describedby="errAgreeDate">
+                    <div id="errAgreeDate" class="error" role="alert">Please provide the agreement date.</div>
+                  </div>
+                  <div class="form-field">
+                    <label for="startDate" class="required">Start Date</label>
+                    <input id="startDate" type="date" aria-required="true" aria-describedby="errStartDate">
+                    <div id="errStartDate" class="error" role="alert">Please provide a start date.</div>
+                  </div>
                 </div>
-                <div>
-                  <label for="startDate" class="required">Start Date</label>
-                  <input id="startDate" type="date" aria-required="true" aria-describedby="errStartDate">
-                  <div id="errStartDate" class="error" role="alert">Please provide a start date.</div>
+
+                <div class="row">
+                  <div class="form-field">
+                    <label for="tenantName">Lead Tenant (fixed)</label>
+                    <input id="tenantName" type="text" value="David Martin" readonly aria-readonly="true">
+                    <span class="hint">This cannot be changed.</span>
+                  </div>
+                  <div class="form-field">
+                    <label for="agent">Managing Agent (fixed)</label>
+                    <input id="agent" type="text" value="Milard’s Property Management" readonly aria-readonly="true">
+                  </div>
                 </div>
-              </div>
 
-              <div class="row">
-                <div>
-                  <label for="tenantName">Lead Tenant (fixed)</label>
-                  <input id="tenantName" type="text" value="David Martin" readonly aria-readonly="true">
-                  <span class="hint">This cannot be changed.</span>
+                <div class="row">
+                  <div class="form-field">
+                    <label for="rent" class="required">Monthly Rent (£)</label>
+                    <input id="rent" type="number" value="750" min="1" step="1" aria-required="true" aria-describedby="errRent">
+                    <div id="errRent" class="error" role="alert">Rent must be at least £1.</div>
+                  </div>
+                  <div class="form-field">
+                    <label for="rentDay" class="required">Rent Due Day</label>
+                    <select id="rentDay" aria-required="true"></select>
+                  </div>
                 </div>
-                <div>
-                  <label for="agent">Managing Agent (fixed)</label>
-                  <input id="agent" type="text" value="Milard’s Property Management" readonly aria-readonly="true">
+
+                <div class="toolbar button-row">
+                  <button class="btn" id="btnGenerate" type="submit">Generate Agreement</button>
+                  <button class="btn btn-secondary" id="btnEmail" type="button">Email David</button>
+                  <button class="btn btn-secondary" id="btnClear" type="button">Clear Form</button>
                 </div>
-              </div>
+              </section>
 
-              <div class="row">
-                <div>
-                  <label for="rent" class="required">Monthly Rent (£)</label>
-                  <input id="rent" type="number" value="750" min="1" step="1" aria-required="true" aria-describedby="errRent">
-                  <div id="errRent" class="error" role="alert">Rent must be at least £1.</div>
+              <section id="subtenants" class="card form-section" aria-labelledby="section-subtenants">
+                <h2 id="section-subtenants">Sub-tenants</h2>
+                <div class="hr"></div>
+
+                <div class="subtenants-header">
+                  <p class="hint">You can have one or two people. The first sub-tenant is required; the second is optional.</p>
+                  <div class="actions button-row">
+                    <button class="btn ghost" id="btnAddSub" type="button">Add another sub-tenant</button>
+                    <button class="btn ghost" id="btnRemoveSub" type="button">Remove last sub-tenant</button>
+                  </div>
                 </div>
-                <div>
-                  <label for="rentDay" class="required">Rent Due Day</label>
-                  <select id="rentDay" aria-required="true"></select>
-                </div>
-              </div>
 
-              <div class="toolbar">
-                <button class="btn primary" id="btnGenerate" type="submit">Generate Agreement</button>
-                <button class="btn" id="btnEmail" type="button">Email David</button>
-                <button class="btn" id="btnClear" type="button">Clear Form</button>
-              </div>
-            </section>
+                <div id="subsContainer"></div>
+              </section>
 
-            <section id="subtenants" class="card" aria-labelledby="section-subtenants">
-              <h2 id="section-subtenants">Sub-tenants</h2>
-              <div class="hr"></div>
-
-              <div class="subtenants-header">
-                <p class="hint">You can have one or two people. The first sub-tenant is required; the second is optional.</p>
-                <div class="actions">
-                  <button class="btn ghost" id="btnAddSub" type="button">Add another sub-tenant</button>
-                  <button class="btn ghost" id="btnRemoveSub" type="button">Remove last sub-tenant</button>
-                </div>
-              </div>
-
-              <div id="subsContainer"></div>
-            </section>
-
-            <section id="signatures" class="card" aria-labelledby="section-signatures">
+              <section id="signatures" class="card form-section" aria-labelledby="section-signatures">
               <h2 id="section-signatures">Signatures</h2>
               <div class="hr"></div>
               <p class="hint">Each sub-tenant gets their own signature pad. Draw slowly for quality or upload a PNG/JPG. Use “Stamp time” to add a UK timestamp.</p>
@@ -111,10 +112,10 @@
 
               <div class="hr"></div>
 
-              <div>
+              <div class="form-field">
                 <label>Lead Tenant Signature (David Martin)</label>
                 <div class="sig-pad"><canvas id="sigTenant"></canvas></div>
-                <div class="sig-tools">
+                <div class="sig-tools button-row">
                   <button class="btn" id="sigTenantClear" type="button">Clear</button>
                   <button class="btn" id="sigTenantStamp" type="button">Stamp time</button>
                   <span id="sigTenantTime" class="hint" aria-live="polite">No timestamp yet</span>
@@ -129,14 +130,14 @@
               <div class="hr"></div>
 
               <div class="row">
-                <div>
+                <div class="form-field">
                   <label for="witName">Witness name (optional)</label>
                   <input id="witName" type="text">
                 </div>
-                <div>
+                <div class="form-field">
                   <label>Witness Signature (optional)</label>
                   <div class="sig-pad"><canvas id="sigWitness"></canvas></div>
-                  <div class="sig-tools">
+                  <div class="sig-tools button-row">
                     <button class="btn" id="sigWitClear" type="button">Clear</button>
                     <button class="btn" id="sigWitStamp" type="button">Stamp time</button>
                     <span id="sigWitTime" class="hint" aria-live="polite">No timestamp yet</span>
@@ -149,15 +150,15 @@
                 </div>
               </div>
 
-              <div class="toolbar">
-                <button class="btn primary" id="btnPrint" type="button">Export as PDF</button>
+              <div class="toolbar button-row">
+                <button class="btn" id="btnPrint" type="button">Export as PDF</button>
               </div>
             </section>
 
           </div>
           <aside class="preview-column" aria-label="Agreement preview">
             <section id="preview" class="agreement card" aria-label="Agreement Preview">
-              <section id="agreement-preview">
+              <section id="agreement-preview" class="agreement-card">
                 <h3>Sub-Tenancy Agreement for Room Rental</h3>
                 <p><strong>Property:</strong> Flat 1, 61 Caledonian Crescent, Edinburgh</p>
                 <div class="divider"></div>
@@ -273,7 +274,7 @@
           </aside>
         </div>
 
-        <div class="toolbar toolbar-bottom">
+        <div class="toolbar toolbar-bottom button-row">
           <a class="btn link" id="btnScrollTop" href="#top">Back to form</a>
           <button class="btn" id="btnEmailBottom" type="button">Email David</button>
           <button class="btn primary" id="export-pdf-button" type="button">Export as PDF</button>
@@ -292,6 +293,7 @@
   <footer class="page-footer">
     <small>Last updated: 8 November 2025</small>
   </footer>
+  </div>
 
   <script type="module" src="./js/save-agreement.js"></script>
   <script src="js/agreement.js" type="module"></script>

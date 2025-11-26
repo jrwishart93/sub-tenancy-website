@@ -358,12 +358,16 @@ function renderSubs() {
     card.className = 'card sub-card';
     card.innerHTML = `
       <h4 class="sub-card__title">Sub-Tenant ${idx + 1}${idx === 0 ? ' (required)' : ''}</h4>
-      <label class="required" for="subName_${sub.index}">Full Name</label>
-      <input type="text" id="subName_${sub.index}" placeholder="Full legal name" aria-required="${idx === 0 ? 'true' : 'false'}" aria-describedby="errSubName_${sub.index}">
-      <div id="errSubName_${sub.index}" class="error" role="alert">Please enter the sub-tenant’s full name.</div>
-      <label class="required" for="subAddr_${sub.index}">Current Address</label>
-      <textarea id="subAddr_${sub.index}" placeholder="Address" aria-required="${idx === 0 ? 'true' : 'false'}" aria-describedby="errSubAddr_${sub.index}"></textarea>
-      <div id="errSubAddr_${sub.index}" class="error" role="alert">Please enter the sub-tenant’s address.</div>
+      <div class="form-field">
+        <label class="required" for="subName_${sub.index}">Full Name</label>
+        <input type="text" id="subName_${sub.index}" placeholder="Full legal name" aria-required="${idx === 0 ? 'true' : 'false'}" aria-describedby="errSubName_${sub.index}">
+        <div id="errSubName_${sub.index}" class="error" role="alert">Please enter the sub-tenant’s full name.</div>
+      </div>
+      <div class="form-field">
+        <label class="required" for="subAddr_${sub.index}">Current Address</label>
+        <textarea id="subAddr_${sub.index}" placeholder="Address" aria-required="${idx === 0 ? 'true' : 'false'}" aria-describedby="errSubAddr_${sub.index}"></textarea>
+        <div id="errSubAddr_${sub.index}" class="error" role="alert">Please enter the sub-tenant’s address.</div>
+      </div>
     `;
     els.subsContainer?.appendChild(card);
 

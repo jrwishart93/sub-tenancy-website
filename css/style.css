@@ -1,16 +1,16 @@
 :root {
   color-scheme: only light;
-  --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-family: 'Inter', sans-serif;
   --font-size-base: 16px;
   --line-height: 1.6;
-  --colour-text: #111827;
+  --colour-text: #1f2937;
   --colour-muted: #4b5563;
   --colour-border: #d1d5db;
   --colour-border-strong: #9ca3af;
   --colour-accent: #111827;
   --colour-danger: #d4351c;
   --colour-success: #059669;
-  --bg-page: #f4f5f7;
+  --bg-page: #f7f8fa;
   --container-width: 960px;
   --space-1: 8px;
   --space-2: 12px;
@@ -31,9 +31,12 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+body {
   font-family: var(--font-family);
-  background: var(--bg-page);
-  color: var(--colour-text);
+  background: #f7f8fa;
+  color: #1f2937;
 }
 
 .page {
@@ -42,13 +45,19 @@ body {
   padding: 16px;
 }
 
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 h1,
 h2,
 h3,
 h4 {
   margin: 0 0 12px;
   font-weight: 600;
-  color: #111827;
+  color: #1f2937;
 }
 
 p {
@@ -59,7 +68,7 @@ p {
 label {
   font-size: 0.95rem;
   font-weight: 500;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   display: block;
 }
 
@@ -80,10 +89,19 @@ textarea,
 select {
   width: 100%;
   padding: 10px 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #d1d5db;
   font: inherit;
   box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
 }
 
 textarea {
@@ -206,27 +224,31 @@ a:hover {
 
 .tabs {
   display: flex;
-  gap: 4px;
-  margin: 0 0 12px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
+.tab-btn,
 .tab-button {
   flex: 1;
+  padding: 10px 12px;
   text-align: center;
-  padding: 8px 10px;
   border-radius: 999px;
-  border: 1px solid transparent;
   background: #e5e7eb;
-  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
   cursor: pointer;
-  color: inherit;
+  transition: background 0.2s, color 0.2s;
   text-decoration: none;
+  color: inherit;
 }
 
+.tab-btn.active,
+.tab-btn[aria-current="true"],
 .tab-button.active,
 .tab-button[aria-current="true"] {
-  background: #111827;
-  color: #ffffff;
+  background: #3b82f6;
+  color: #fff;
 }
 
 .page-header {
@@ -435,23 +457,31 @@ textarea {
 }
 
 .form-field {
-  margin-bottom: 14px;
+  margin-bottom: 15px;
+}
+
+
+.section-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
 }
 
 .form-section {
   background: #ffffff;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-  margin-bottom: 16px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
 }
 
 .form-actions,
 .button-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 10px;
 }
 
 .form-actions {
@@ -461,45 +491,41 @@ textarea {
 button,
 .btn {
   border: none;
-  border-radius: 999px;
+  border-radius: 8px;
   padding: 10px 16px;
   font: inherit;
   cursor: pointer;
-  background: #111827;
-  color: #ffffff;
-  transition: background 0.15s ease, transform 0.05s ease;
+  background: #e5e7eb;
+  color: #111827;
+  transition: background 0.2s;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   text-decoration: none;
 }
 
-button:hover,
-.btn:hover {
-  background: #1f2937;
-}
-
-button:active,
-.btn:active {
-  transform: translateY(1px);
-}
-
 .btn-primary {
-  background: #111827;
+  background: #2563eb;
   color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
 }
 
 .btn.primary {
-  background: #111827;
+  background: #2563eb;
   color: #ffffff;
 }
 
+.btn-muted,
 .btn-secondary,
 .btn.ghost {
   background: #e5e7eb;
   color: #111827;
 }
 
+.btn-muted:hover,
 .btn-secondary:hover,
 .btn.ghost:hover {
   background: #d1d5db;
@@ -609,6 +635,26 @@ button:active,
   margin-bottom: 6px;
 }
 
+#agreement-preview {
+  line-height: 1.55;
+  font-size: 1rem;
+  color: #374151;
+}
+
+#agreement-preview h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+#agreement-preview h4 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
 .site-footer {
   border-top: 1px solid var(--colour-border);
   padding: var(--space-3);
@@ -622,24 +668,25 @@ button:active,
     padding: 12px;
   }
 
-  .form-section {
-    padding: 14px;
+  .container {
+    padding: 12px;
   }
 
   .tabs {
-    flex-direction: row;
-    gap: 6px;
+    flex-direction: column;
   }
 
+  .tab-btn,
   .tab-button {
-    font-size: 0.9rem;
-    padding: 10px 8px;
+    width: 100%;
   }
 
   .button-row {
     flex-direction: column;
   }
 
+  .btn-primary,
+  .btn-muted,
   .button-row button,
   .button-row .btn {
     width: 100%;

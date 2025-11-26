@@ -137,28 +137,6 @@
               </div>
 
               <div class="hr"></div>
-
-              <div class="row">
-                <div class="form-field">
-                  <label for="witName">Witness name (optional)</label>
-                  <input id="witName" type="text">
-                </div>
-                <div class="form-field">
-                  <label>Witness Signature (optional)</label>
-                  <div class="sig-pad"><canvas id="sigWitness"></canvas></div>
-                  <div class="sig-tools button-row">
-                    <button class="btn" id="sigWitClear" type="button">Clear</button>
-                    <button class="btn" id="sigWitStamp" type="button">Stamp time</button>
-                    <span id="sigWitTime" class="hint" aria-live="polite">No timestamp yet</span>
-                  </div>
-                  <div class="upload">
-                    <label class="file-label" for="sigWitUpload">Upload signature image</label>
-                    <input id="sigWitUpload" type="file" accept="image/*">
-                    <span class="hint">Upload PNG or JPG</span>
-                  </div>
-                </div>
-              </div>
-
               <div class="toolbar button-row">
                 <button class="btn" id="btnPrint" type="button">Export as PDF</button>
               </div>
@@ -260,6 +238,35 @@
                 <h4>Acceptance</h4>
                 <p>By signing below, the Sub-Tenant(s) confirm they have read and understood this Agreement, agree to pay £<span data-bind="initTotal">1500</span> upfront (first and last month’s rent, with no separate deposit), then £<span data-bind="rent">750</span> on or before the <span data-bind="rentDueDateOrdinal">[Due Day]</span> of each month, agree to split utilities and council tax equally, will follow the house rules, and will provide at least 28 days’ written notice before ending the tenancy.</p>
 
+                <div class="form-section">
+                  <div class="form-field">
+                    <label for="leadTenantSignature">Lead tenant signature (David Martin)</label>
+                    <input
+                      id="leadTenantSignature"
+                      type="text"
+                      value="David Martin"
+                      readonly
+                    />
+                  </div>
+
+                  <div class="form-field">
+                    <label for="subTenantName">Sub-Tenant name</label>
+                    <input id="subTenantName" type="text" />
+                  </div>
+
+                  <div class="form-field">
+                    <label for="subTenantSignature">Sub-Tenant signature</label>
+                    <input id="subTenantSignature" type="text" />
+                  </div>
+
+                  <div class="form-field">
+                    <label for="subTenantSignatureDate">Sub-Tenant signature date</label>
+                    <input id="subTenantSignatureDate" type="date" />
+                  </div>
+                </div>
+
+                <div id="acceptancePreview" class="form-section"></div>
+
                 <p><strong>Signature Date:</strong> <span data-bind="signatureDate">[Signature Date]</span></p>
 
                 <div class="signing" id="signingSubs"></div>
@@ -271,13 +278,6 @@
                     <div class="sig-line"></div>
                     <div class="printed-name">Printed name: <span data-bind="tenantName">David Martin</span></div>
                     <p class="stamp">Signed and dated: <span id="stampTenant">[Signature and UK timestamp]</span></p>
-                  </div>
-                  <div class="sig-block">
-                    <p><strong>Witness (optional):</strong> <span id="bindWitName">[Witness]</span></p>
-                    <img id="imgWit" class="sig-img" alt="Witness signature">
-                    <div class="sig-line"></div>
-                    <div class="printed-name">Printed name: <span id="bindWitName2">[Witness]</span></div>
-                    <p class="stamp">Signed and dated: <span id="stampWit">[Signature and UK timestamp]</span></p>
                   </div>
                 </div>
               </section>

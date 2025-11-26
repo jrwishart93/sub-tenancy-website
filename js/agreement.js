@@ -57,7 +57,6 @@ const debounce = (fn, wait = 300) => {
 const FORM_KEY = 'tenancyForm_v4';
 const SIG_KEYS = {
   tenant: 'sig_tenant',
-  witness: 'sig_witness',
 };
 const MAX_SUBS = 2;
 const els = {
@@ -68,11 +67,13 @@ const els = {
   agent: $('agent'),
   rent: $('rent'),
   rentDueDate: $('rentDueDate'),
-  witName: $('witName'),
+  leadTenantSignature: $('leadTenantSignature'),
+  subTenantName: $('subTenantName'),
+  subTenantSignature: $('subTenantSignature'),
+  subTenantSignatureDate: $('subTenantSignatureDate'),
+  acceptancePreview: $('acceptancePreview'),
   imgTenant: $('imgTenant'),
-  imgWit: $('imgWit'),
   stampTenant: $('stampTenant'),
-  stampWit: $('stampWit'),
   errAgreementDate: $('errAgreementDate'),
   errSignatureDate: $('errSignatureDate'),
   errMoveInDate: $('errMoveInDate'),
@@ -459,7 +460,10 @@ function saveForm() {
       moveInDate: els.moveInDate?.value,
       rent: els.rent?.value,
       rentDueDate: els.rentDueDate?.value,
-      witName: els.witName?.value,
+      leadTenantSignature: els.leadTenantSignature?.value,
+      subTenantName: els.subTenantName?.value,
+      subTenantSignature: els.subTenantSignature?.value,
+      subTenantSignatureDate: els.subTenantSignatureDate?.value,
       subs: subs.map((sub) => ({
         index: sub.index,
         name: $(`subName_${sub.index}`)?.value || '',
@@ -499,7 +503,14 @@ function loadForm() {
     if (data.moveInDate && els.moveInDate) els.moveInDate.value = data.moveInDate;
     if (data.rent && els.rent) els.rent.value = data.rent;
     if (els.rentDueDate) els.rentDueDate.value = '1';
-    if (data.witName && els.witName) els.witName.value = data.witName;
+    if (els.leadTenantSignature) {
+      els.leadTenantSignature.value = data.leadTenantSignature || 'David Martin';
+    }
+    if (els.subTenantName) els.subTenantName.value = data.subTenantName || '';
+    if (els.subTenantSignature) els.subTenantSignature.value = data.subTenantSignature || '';
+    if (els.subTenantSignatureDate) {
+      els.subTenantSignatureDate.value = data.subTenantSignatureDate || '';
+    }
     subs.forEach((sub) => {
       const nameField = $(`subName_${sub.index}`);
       const addrField = $(`subAddr_${sub.index}`);
@@ -537,6 +548,15 @@ function bindAgreement() {
   const initTotal = rent * 2;
   setBind('initTotal', initTotal ? String(initTotal) : '0');
 
+  const leadTenantSignature = els.leadTenantSignature?.value || 'David Martin';
+  const subTenantName = els.subTenantName?.value.trim() || '';
+  const subTenantSignature = els.subTenantSignature?.value.trim() || '';
+  const subTenantSignatureDate = els.subTenantSignatureDate?.value || '';
+  const acceptanceBlock = `Acceptance\nBy signing below, the parties agree to the terms of this Sub-Tenancy Agreement.\n\nLead tenant: ${leadTenantSignature}\nSub-Tenant: ${subTenantName || '_________________'}\n\nSub-Tenant signature: ${subTenantSignature || ''}\nSub-Tenant signature date: ${subTenantSignatureDate || ''}`;
+  if (els.acceptancePreview) {
+    els.acceptancePreview.textContent = acceptanceBlock;
+  }
+
   subs.forEach((sub, idx) => {
     const nameValue = $(`subName_${sub.index}`)?.value.trim() || `[Sub-Tenant ${idx + 1}]`;
     const addrValue = $(`subAddr_${sub.index}`)?.value.trim() || `[Address ${idx + 1}]`;
@@ -547,10 +567,6 @@ function bindAgreement() {
   document.querySelectorAll('[data-if="hasSub1"]').forEach((el) => {
     el.style.display = subs.length > 1 ? 'inline' : 'none';
   });
-
-  const witnessName = els.witName?.value.trim() || '[Witness]';
-  $('bindWitName').textContent = witnessName;
-  $('bindWitName2').textContent = witnessName;
 }
 
 function prepareForPrint() {
@@ -562,7 +578,6 @@ function prepareForPrint() {
     }
   });
   tenantSig?.applyToImage();
-  witnessSig?.applyToImage();
 }
 
 const formatEmailDate = (value) => {
@@ -634,7 +649,10 @@ function clearForm() {
   if (els.moveInDate) els.moveInDate.value = '2025-11-29';
   if (els.rent) els.rent.value = '750';
   if (els.rentDueDate) els.rentDueDate.value = '1';
-  if (els.witName) els.witName.value = '';
+  if (els.leadTenantSignature) els.leadTenantSignature.value = 'David Martin';
+  if (els.subTenantName) els.subTenantName.value = '';
+  if (els.subTenantSignature) els.subTenantSignature.value = '';
+  if (els.subTenantSignatureDate) els.subTenantSignatureDate.value = '';
   subs = [newSub(0)];
   renderSubs();
   bindAgreement();
@@ -645,7 +663,17 @@ function scrollToTop(e) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-['agreementDate', 'signatureDate', 'moveInDate', 'rent', 'rentDueDate', 'witName'].forEach((id) => {
+[
+  'agreementDate',
+  'signatureDate',
+  'moveInDate',
+  'rent',
+  'rentDueDate',
+  'leadTenantSignature',
+  'subTenantName',
+  'subTenantSignature',
+  'subTenantSignatureDate',
+].forEach((id) => {
   const el = $(id);
   if (!el) return;
   el.addEventListener('input', debounce(saveForm, 500));
@@ -654,14 +682,6 @@ function scrollToTop(e) {
     el.addEventListener('change', saveForm);
   }
 });
-
-if (els.witName) {
-  els.witName.addEventListener('input', () => {
-    const witness = els.witName.value.trim() || '[Witness]';
-    $('bindWitName').textContent = witness;
-    $('bindWitName2').textContent = witness;
-  });
-}
 
 loadForm();
 bindAgreement();
@@ -697,7 +717,6 @@ $('btnGenerate')?.addEventListener('click', () => {
   bindAgreement();
   subs.forEach((sub) => sub.sig?.persist());
   tenantSig?.persist();
-  witnessSig?.persist();
   const preview = $('preview');
   if (preview) {
     window.scrollTo({ top: preview.offsetTop - 8, behavior: 'smooth' });
@@ -732,24 +751,13 @@ const tenantSig = createSignaturePad({
   storageKey: SIG_KEYS.tenant,
   imgId: 'imgTenant',
 });
-const witnessSig = createSignaturePad({
-  canvasId: 'sigWitness',
-  timeSpanId: 'sigWitTime',
-  stampOutputId: 'stampWit',
-  storageKey: SIG_KEYS.witness,
-  imgId: 'imgWit',
-});
 
 tenantSig?.loadFromStorage();
-witnessSig?.loadFromStorage();
 
 $('sigTenantClear')?.addEventListener('click', () => tenantSig?.clearSig());
 $('sigTenantStamp')?.addEventListener('click', () => tenantSig?.stamp());
-$('sigWitClear')?.addEventListener('click', () => witnessSig?.clearSig());
-$('sigWitStamp')?.addEventListener('click', () => witnessSig?.stamp());
 
 handleUpload($('sigTenantUpload'), els.imgTenant, SIG_KEYS.tenant);
-handleUpload($('sigWitUpload'), els.imgWit, SIG_KEYS.witness);
 
 window.addEventListener('beforeprint', () => {
   bindAgreement();

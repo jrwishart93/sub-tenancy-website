@@ -123,18 +123,8 @@
               <div class="hr"></div>
 
               <div class="form-field">
-                <label>Lead Tenant Signature (David Martin)</label>
-                <div class="sig-pad"><canvas id="sigTenant"></canvas></div>
-                <div class="sig-tools button-row">
-                  <button class="btn" id="sigTenantClear" type="button">Clear</button>
-                  <button class="btn" id="sigTenantStamp" type="button">Stamp time</button>
-                  <span id="sigTenantTime" class="hint" aria-live="polite">No timestamp yet</span>
-                </div>
-                <div class="upload">
-                  <label class="file-label" for="sigTenantUpload">Upload signature image</label>
-                  <input id="sigTenantUpload" type="file" accept="image/*">
-                  <span class="hint">Upload PNG or JPG</span>
-                </div>
+                <label>Lead tenant signature</label>
+                <div id="leadTenantSignature" class="signature-text">David Martin</div>
               </div>
 
               <div class="hr"></div>
@@ -239,7 +229,7 @@
                 <div class="form-section">
                   <div class="form-field">
                     <label>Lead tenant signature</label>
-                    <div id="leadTenantSignature" class="signature-display">David Martin</div>
+                    <div class="signature-text">David Martin</div>
                   </div>
 
                   <div class="form-field">
@@ -267,10 +257,10 @@
                 <div class="signing">
                   <div class="sig-block">
                     <p><strong>Lead Tenant:</strong> <span data-bind="tenantName">David Martin</span></p>
-                    <img id="imgTenant" class="sig-img" alt="Lead tenant signature">
+                    <div class="signature-text">David Martin</div>
                     <div class="sig-line"></div>
                     <div class="printed-name">Printed name: <span data-bind="tenantName">David Martin</span></div>
-                    <p class="stamp">Signed and dated: <span id="stampTenant">[Signature and UK timestamp]</span></p>
+                    <p class="stamp">Signed and dated: <span data-bind="signatureDate">[Signature Date]</span></p>
                   </div>
                 </div>
               </section>

@@ -58,7 +58,7 @@ const FORM_KEY = 'tenancyForm_v4';
 const SIG_KEYS = {
   tenant: 'sig_tenant',
 };
-const MAX_SUBS = 2;
+const MAX_SUBS = 1;
 const els = {
   agreementDate: $('agreementDate'),
   signatureDate: $('signatureDate'),
@@ -371,7 +371,7 @@ function renderSubs() {
     const card = document.createElement('div');
     card.className = 'card sub-card';
     card.innerHTML = `
-      <h4 class="sub-card__title">Sub-Tenant ${idx + 1}${idx === 0 ? ' (required)' : ''}</h4>
+      <h4 class="sub-card__title">Sub-Tenant (required)</h4>
       <div class="form-field">
         <label class="required" for="subName_${sub.index}">Full Name</label>
         <input type="text" id="subName_${sub.index}" placeholder="Full legal name" aria-required="${idx === 0 ? 'true' : 'false'}" aria-describedby="errSubName_${sub.index}">
@@ -387,7 +387,7 @@ function renderSubs() {
 
     const sigWrapper = document.createElement('div');
     sigWrapper.innerHTML = `
-      <label>Sub-Tenant ${idx + 1} Signature</label>
+      <label>Sub-Tenant Signature</label>
       <div class="sig-pad"><canvas id="sigSub_${sub.index}"></canvas></div>
       <div class="sig-tools">
         <button class="btn" id="sigSubClear_${sub.index}" type="button">Clear</button>
@@ -406,8 +406,8 @@ function renderSubs() {
     const signing = document.createElement('div');
     signing.className = 'sig-block';
     signing.innerHTML = `
-      <p><strong>${idx === 0 ? 'Sub-Tenant' : 'Co-Sub-Tenant'}:</strong> <span data-bind="subTenant${idx}">[Name]</span></p>
-      <img id="imgSub_${sub.index}" class="sig-img" alt="Sub-Tenant signature ${idx + 1}">
+      <p><strong>Sub-Tenant:</strong> <span data-bind="subTenant${idx}">[Name]</span></p>
+      <img id="imgSub_${sub.index}" class="sig-img" alt="Sub-Tenant signature">
       <div class="sig-line"></div>
       <div class="printed-name">Printed name: <span data-bind="subTenant${idx}">[Name]</span></div>
       <p class="stamp">Signed and dated: <span id="${sub.tsId}">[Signature and UK timestamp]</span></p>
@@ -616,11 +616,11 @@ function emailDavid() {
 
   const partiesSection = `This Sub-Tenancy Agreement (“the Agreement”) is made on ${agreementDate} between:\n1. David Martin (“the Tenant” or “lead tenant”), the primary tenant and current occupier who rents the property from the landlord through Milard’s Property Management and has written permission to sub-let one room in the property; and\n2. ${names} (“the Sub-Tenant”).`;
 
-  const initialPaymentsSection = `Initial Payments (no deposit):\n- The Sub-Tenant(s) agree to pay first and last month’s rent upfront on signing. The initial total is ${initTotal}. There is no separate tenancy deposit. The last month’s rent is applied to the final month of the tenancy.\n- Rent is charged by whole calendar month and is not refunded pro-rata. If the Sub-Tenant(s) choose to leave part-way through a paid month, or leave before the end of the required 28 days’ notice period, the rent already paid for that month will remain payable in full.\n- After departure at the end of the tenancy, reasonable charges for any damage beyond fair wear and tear, professional cleaning if required, or unpaid utilities may be recovered from rent paid in advance. Receipts or reasonable evidence will be provided for any such deductions, and any remaining balance will be returned to the Sub-Tenant(s).`;
+  const initialPaymentsSection = `Initial Payments (no deposit):\n- The Sub-Tenant agrees to pay first and last month’s rent upfront on signing. The initial total is ${initTotal}. There is no separate tenancy deposit. The last month’s rent is applied to the final month of the tenancy.\n- Rent is charged by whole calendar month and is not refunded pro-rata. If the Sub-Tenant chooses to leave part-way through a paid month, or leave before the end of the required 28 days’ notice period, the rent already paid for that month will remain payable in full.\n- After departure at the end of the tenancy, reasonable charges for any damage beyond fair wear and tear, professional cleaning if required, or unpaid utilities may be recovered from rent paid in advance. Receipts or reasonable evidence will be provided for any such deductions, and any remaining balance will be returned to the Sub-Tenant.`;
 
-  const endingSection = `Ending the Agreement:\n- Either party may end this Agreement by giving at least 28 days written notice. Four to six weeks’ notice is preferred where possible.\n- On leaving, return all keys/fobs and leave the room and shared areas clean and undamaged, allowing for fair wear and tear.\n- Rent is payable by full calendar month. Where the Sub-Tenant(s) choose to leave during a month that has already been paid for, no pro-rata refund of that month’s rent will be due.`;
+  const endingSection = `Ending the Agreement:\n- Either party may end this Agreement by giving at least 28 days written notice. Four to six weeks’ notice is preferred where possible.\n- On leaving, return all keys/fobs and leave the room and shared areas clean and undamaged, allowing for fair wear and tear.\n- Rent is payable by full calendar month. Where the Sub-Tenant chooses to leave during a month that has already been paid for, no pro-rata refund of that month’s rent will be due.`;
 
-  const generalSection = `General:\n- This Agreement constitutes the entire understanding between the parties and supersedes prior agreements. Any amendments must be in writing and signed by both parties. This Agreement is governed by the laws of Scotland. The parties will attempt to resolve disputes amicably before formal action.\n- The landlord and managing agent are not parties to this Sub-Tenancy Agreement. Day-to-day issues and communications under this Agreement are between the lead tenant and the Sub-Tenant(s), except where the law requires the landlord or managing agent to become involved.`;
+  const generalSection = `General:\n- This Agreement constitutes the entire understanding between the parties and supersedes prior agreements. Any amendments must be in writing and signed by both parties. This Agreement is governed by the laws of Scotland. The parties will attempt to resolve disputes amicably before formal action.\n- The landlord and managing agent are not parties to this Sub-Tenancy Agreement. Day-to-day issues and communications under this Agreement are between the lead tenant and the Sub-Tenant, except where the law requires the landlord or managing agent to become involved.`;
 
   const body = encodeURIComponent(
     `Hi David,

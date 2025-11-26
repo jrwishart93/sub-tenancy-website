@@ -1,16 +1,16 @@
 :root {
   color-scheme: only light;
-  --font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-size-base: 16px;
-  --line-height: 1.55;
-  --colour-text: #0b0c0c;
-  --colour-muted: #505a5f;
-  --colour-border: #b1b4b6;
-  --colour-border-strong: #505a5f;
-  --colour-accent: #1d70b8;
+  --line-height: 1.6;
+  --colour-text: #111827;
+  --colour-muted: #4b5563;
+  --colour-border: #d1d5db;
+  --colour-border-strong: #9ca3af;
+  --colour-accent: #111827;
   --colour-danger: #d4351c;
-  --colour-success: #00703c;
-  --bg-page: #ffffff;
+  --colour-success: #059669;
+  --bg-page: #f4f5f7;
   --container-width: 960px;
   --space-1: 8px;
   --space-2: 12px;
@@ -29,15 +29,57 @@
 html,
 body {
   height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  background: var(--bg-page);
+  color: var(--colour-text);
 }
 
-body {
-  margin: 0;
-  font-family: var(--font-family);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height);
-  background-color: var(--bg-page);
-  color: var(--colour-text);
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 12px;
+  font-weight: 600;
+  color: #111827;
+}
+
+p {
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+  display: block;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="email"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
 }
 
 a {
@@ -151,6 +193,31 @@ a:hover {
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   padding: var(--space-2) var(--space-3);
   backdrop-filter: blur(8px);
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin: 0 0 12px;
+}
+
+.tab-button {
+  flex: 1;
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: #e5e7eb;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+.tab-button.active,
+.tab-button[aria-current="true"] {
+  background: #111827;
+  color: #ffffff;
 }
 
 .page-header {
@@ -304,7 +371,7 @@ a:hover {
 }
 
 label {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .required::after {
@@ -329,7 +396,7 @@ textarea:focus-visible {
 }
 
 textarea {
-  min-height: 120px;
+  min-height: 100px;
   resize: vertical;
 }
 
@@ -358,36 +425,75 @@ textarea {
   margin-top: 4px;
 }
 
-.form-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  justify-content: flex-end;
-  margin-top: var(--space-3);
+.form-field {
+  margin-bottom: 14px;
 }
 
+.form-section {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  margin-bottom: 16px;
+}
+
+.form-actions,
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.form-actions {
+  justify-content: flex-end;
+}
+
+button,
 .btn {
-  appearance: none;
-  border: 1px solid var(--colour-border);
-  border-radius: 6px;
-  background-color: #fff;
-  color: var(--colour-text);
+  border: none;
+  border-radius: 999px;
   padding: 10px 16px;
-  font-weight: 700;
+  font: inherit;
   cursor: pointer;
+  background: #111827;
+  color: #ffffff;
+  transition: background 0.15s ease, transform 0.05s ease;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  text-decoration: none;
+}
+
+button:hover,
+.btn:hover {
+  background: #1f2937;
+}
+
+button:active,
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: #111827;
+  color: #ffffff;
 }
 
 .btn.primary {
-  background-color: var(--colour-accent);
-  color: #fff;
-  border-color: var(--colour-accent);
+  background: #111827;
+  color: #ffffff;
 }
 
+.btn-secondary,
 .btn.ghost {
-  background-color: #f3f2f1;
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.btn-secondary:hover,
+.btn.ghost:hover {
+  background: #d1d5db;
 }
 
 .btn:disabled {
@@ -480,12 +586,67 @@ textarea {
   display: block;
 }
 
+.agreement-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  margin-bottom: 18px;
+}
+
+.agreement-card h3,
+.agreement-card h4 {
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
 .site-footer {
   border-top: 1px solid var(--colour-border);
   padding: var(--space-3);
   text-align: center;
   font-size: 0.85rem;
   color: var(--colour-muted);
+}
+
+@media (max-width: 600px) {
+  .page {
+    padding: 12px;
+  }
+
+  .form-section {
+    padding: 14px;
+  }
+
+  .tabs {
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  .tab-button {
+    font-size: 0.9rem;
+    padding: 10px 8px;
+  }
+
+  .button-row {
+    flex-direction: column;
+  }
+
+  .button-row button,
+  .button-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .agreement-card {
+    padding: 14px;
+    font-size: 0.9rem;
+  }
+
+  #agreement-preview {
+    max-height: 70vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 @media (max-width: 720px) {

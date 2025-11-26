@@ -1,7 +1,6 @@
 const FORM_STORAGE_KEY = 'tenancy_form_v1';
 const SIGNATURE_KEYS = {
   sigSub0: 'sig_sub_0',
-  sigSub1: 'sig_sub_1',
   sigTenant: 'sig_tenant',
   sigWitness: 'sig_witness',
 };
@@ -110,8 +109,6 @@ const fieldIds = {
   subTenantName: 'subTenantName',
   subTenantEmail: 'subTenantEmail',
   subTenantAddress: 'subTenantAddress',
-  coSubTenantName: 'coSubTenantName',
-  coSubTenantAddress: 'coSubTenantAddress',
   witnessName: 'witnessName',
   agreeTerms: 'agreeTerms',
 };
@@ -140,8 +137,6 @@ const collectFormData = () => {
   const subTenantName = fieldElements.subTenantName?.value?.trim() ?? '';
   const subTenantEmail = fieldElements.subTenantEmail?.value?.trim() ?? '';
   const subTenantAddress = fieldElements.subTenantAddress?.value?.trim() ?? '';
-  const coSubTenantName = fieldElements.coSubTenantName?.value?.trim() ?? '';
-  const coSubTenantAddress = fieldElements.coSubTenantAddress?.value?.trim() ?? '';
   const witnessName = fieldElements.witnessName?.value?.trim() ?? '';
   const agreeTerms = Boolean(fieldElements.agreeTerms?.checked);
 
@@ -152,11 +147,8 @@ const collectFormData = () => {
     subTenantName,
     subTenantEmail,
     subTenantAddress,
-    coSubTenantName,
-    coSubTenantAddress,
     witnessName,
     agreeTerms,
-    hasCoSubTenant: Boolean(coSubTenantName || coSubTenantAddress),
   };
 };
 
@@ -363,12 +355,6 @@ const applyStoredForm = () => {
   if (fieldElements.subTenantAddress && stored.subTenantAddress) {
     fieldElements.subTenantAddress.value = stored.subTenantAddress;
   }
-  if (fieldElements.coSubTenantName && stored.coSubTenantName) {
-    fieldElements.coSubTenantName.value = stored.coSubTenantName;
-  }
-  if (fieldElements.coSubTenantAddress && stored.coSubTenantAddress) {
-    fieldElements.coSubTenantAddress.value = stored.coSubTenantAddress;
-  }
   if (fieldElements.witnessName && stored.witnessName) {
     fieldElements.witnessName.value = stored.witnessName;
   }
@@ -426,7 +412,6 @@ const persistSignature = (state) => {
 const updateSignaturePreview = () => {
   const bindings = {
     sigSub0Stamp: signatureStates.sigSub0?.timestamp || '[Signature and UK timestamp]',
-    sigSub1Stamp: signatureStates.sigSub1?.timestamp || '[Signature and UK timestamp]',
     sigTenantStamp: signatureStates.sigTenant?.timestamp || '[Signature and UK timestamp]',
     sigWitnessStamp: signatureStates.sigWitness?.timestamp || '[Signature and UK timestamp]',
   };
@@ -629,34 +614,20 @@ const initSignaturePad = (id) => {
   signatureStates[id] = state;
 };
 
-['sigSub0', 'sigSub1', 'sigTenant', 'sigWitness'].forEach(initSignaturePad);
+['sigSub0', 'sigTenant', 'sigWitness'].forEach(initSignaturePad);
 
-const coSubSignatureCard = document.getElementById('coSubSignature');
 const exportButton = document.getElementById('exportPdf');
 const previewContainer = document.getElementById('preview');
 
 const updatePreview = (data = currentFormData) => {
-  const hasCoSub = data.hasCoSubTenant;
-  document.querySelectorAll('[data-if="hasCoSub"]').forEach((el) => {
-    el.toggleAttribute('hidden', !hasCoSub);
-  });
-  if (coSubSignatureCard) {
-    coSubSignatureCard.hidden = !hasCoSub;
-  }
-
   const bindings = {
     agreementDate: data.agreementDate ? formatDateUK(data.agreementDate) : '[Date]',
     startDate: data.startDate ? formatDateUK(data.startDate) : '[Start Date]',
     rentDueDayOrdinal: data.rentDueDay ? ordinal(data.rentDueDay) : '[Due Day]',
     subTenantName: data.subTenantName || '[Sub-Tenant full name]',
     subTenantAddress: data.subTenantAddress || '[Sub-Tenant address]',
-    coSubTenantName: data.coSubTenantName || '[Co-Sub-Tenant full name]',
-    coSubTenantAddress: data.coSubTenantAddress || '[Co-Sub-Tenant address]',
     witnessName: data.witnessName || '[Witness name]',
     sigSub0Stamp: signatureStates.sigSub0?.timestamp || '[Signature and UK timestamp]',
-    sigSub1Stamp: hasCoSub
-      ? signatureStates.sigSub1?.timestamp || '[Signature and UK timestamp]'
-      : '[Signature and UK timestamp]',
     sigTenantStamp: signatureStates.sigTenant?.timestamp || '[Signature and UK timestamp]',
     sigWitnessStamp: signatureStates.sigWitness?.timestamp || '[Signature and UK timestamp]',
   };
@@ -685,8 +656,7 @@ const updateExportState = (data = currentFormData, formValid) => {
   if (!exportButton) return;
   const isFormValid = typeof formValid === 'boolean' ? formValid : validateForm(false, data);
   const subSignaturePresent = Boolean(signatureStates.sigSub0?.image);
-  const coSignaturePresent = !data.hasCoSubTenant || Boolean(signatureStates.sigSub1?.image);
-  const canExport = isFormValid && subSignaturePresent && coSignaturePresent;
+  const canExport = isFormValid && subSignaturePresent;
   exportButton.disabled = !canExport;
 };
 
@@ -817,11 +787,7 @@ const emailButton = document.getElementById('emailDavid');
 emailButton?.addEventListener('click', () => {
   const formValid = ensureFormValidityForActions();
   if (!formValid) return;
-  const names = currentFormData.hasCoSubTenant
-    ? `${currentFormData.subTenantName || 'Sub-tenant'} & ${
-        currentFormData.coSubTenantName || 'Co-sub-tenant'
-      }`
-    : currentFormData.subTenantName || 'New sub-tenant';
+  const names = currentFormData.subTenantName || 'New sub-tenant';
   const subject = encodeURIComponent(`Sub-Tenancy Agreement — ${names}`);
   const agreementDate = currentFormData.agreementDate
     ? formatDateUK(currentFormData.agreementDate)
@@ -835,11 +801,11 @@ emailButton?.addEventListener('click', () => {
 
   const partiesSection = `This Sub-Tenancy Agreement (“the Agreement”) is made on ${agreementDate} between:\n1. David Martin (“the Tenant” or “lead tenant”), the primary tenant and current occupier who rents the property from the landlord through Milard’s Property Management and has written permission to sub-let one room in the property; and\n2. ${names} (“the Sub-Tenant”).`;
 
-  const initialPaymentsSection = `Initial Payments (no deposit):\n- The Sub-Tenant(s) agree to pay first and last month’s rent upfront on signing. The initial total is £1500. There is no separate tenancy deposit. The last month’s rent is applied to the final month of the tenancy.\n- Rent is charged by whole calendar month and is not refunded pro-rata. If the Sub-Tenant(s) choose to leave part-way through a paid month, or leave before the end of the required 28 days’ notice period, the rent already paid for that month will remain payable in full.\n- After departure at the end of the tenancy, reasonable charges for any damage beyond fair wear and tear, professional cleaning if required, or unpaid utilities may be recovered from rent paid in advance. Receipts or reasonable evidence will be provided for any such deductions, and any remaining balance will be returned to the Sub-Tenant(s).`;
+  const initialPaymentsSection = `Initial Payments (no deposit):\n- The Sub-Tenant agrees to pay first and last month’s rent upfront on signing. The initial total is £1500. There is no separate tenancy deposit. The last month’s rent is applied to the final month of the tenancy.\n- Rent is charged by whole calendar month and is not refunded pro-rata. If the Sub-Tenant chooses to leave part-way through a paid month, or leave before the end of the required 28 days’ notice period, the rent already paid for that month will remain payable in full.\n- After departure at the end of the tenancy, reasonable charges for any damage beyond fair wear and tear, professional cleaning if required, or unpaid utilities may be recovered from rent paid in advance. Receipts or reasonable evidence will be provided for any such deductions, and any remaining balance will be returned to the Sub-Tenant.`;
 
-  const endingSection = `Ending the Agreement:\n- Either party may end this Agreement by giving at least 28 days written notice. Four to six weeks’ notice is preferred where possible.\n- On leaving, return all keys/fobs and leave the room and shared areas clean and undamaged, allowing for fair wear and tear.\n- Rent is payable by full calendar month. Where the Sub-Tenant(s) choose to leave during a month that has already been paid for, no pro-rata refund of that month’s rent will be due.`;
+  const endingSection = `Ending the Agreement:\n- Either party may end this Agreement by giving at least 28 days written notice. Four to six weeks’ notice is preferred where possible.\n- On leaving, return all keys/fobs and leave the room and shared areas clean and undamaged, allowing for fair wear and tear.\n- Rent is payable by full calendar month. Where the Sub-Tenant chooses to leave during a month that has already been paid for, no pro-rata refund of that month’s rent will be due.`;
 
-  const generalSection = `General:\n- This Agreement constitutes the entire understanding between the parties and supersedes prior agreements. Any amendments must be in writing and signed by both parties. This Agreement is governed by the laws of Scotland. The parties will attempt to resolve disputes amicably before formal action.\n- The landlord and managing agent are not parties to this Sub-Tenancy Agreement. Day-to-day issues and communications under this Agreement are between the lead tenant and the Sub-Tenant(s), except where the law requires the landlord or managing agent to become involved.`;
+  const generalSection = `General:\n- This Agreement constitutes the entire understanding between the parties and supersedes prior agreements. Any amendments must be in writing and signed by both parties. This Agreement is governed by the laws of Scotland. The parties will attempt to resolve disputes amicably before formal action.\n- The landlord and managing agent are not parties to this Sub-Tenancy Agreement. Day-to-day issues and communications under this Agreement are between the lead tenant and the Sub-Tenant, except where the law requires the landlord or managing agent to become involved.`;
 
   const body = encodeURIComponent(
     `Hello David,

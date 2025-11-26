@@ -131,10 +131,6 @@
               <textarea id="subTenantAddress" name="subTenantAddress" rows="3" required></textarea>
               <p class="error" id="subTenantAddressError"></p>
             </div>
-            <div class="field">
-              <label for="witnessName">Witness name (optional)</label>
-              <input type="text" id="witnessName" name="witnessName">
-            </div>
           </fieldset>
 
           <div class="confirm-box">
@@ -154,9 +150,9 @@
       <div class="panel-card">
         <h2 id="tab-sign-title">Sign and export</h2>
         <p class="hint">
-          David Martin has already signed. His signature is pre-filled below. Sub-tenant and
-          witness can draw signatures on their pads or upload a clear photo. Use “Stamp time” to
-          record a UK timestamp.
+          David Martin has already signed. His signature is pre-filled below. Sub-tenant can draw
+          a signature on the pad or upload a clear photo. Use “Stamp time” to record a UK
+          timestamp.
         </p>
 
         <div class="signature-section" id="signatureSection">
@@ -183,19 +179,6 @@
             <p class="hint"><strong>Signed and dated:</strong> <span data-bind="sigTenantStamp">Signed on file</span></p>
           </article>
 
-          <article class="signature-card">
-            <h3>Witness signature</h3>
-            <div class="sig-pad" role="img" aria-label="Witness signature pad">
-              <canvas id="sigWitness" data-storage="sig_witness"></canvas>
-            </div>
-            <div class="sig-tools">
-              <button type="button" class="btn" data-action="clear" data-target="sigWitness">Clear</button>
-              <button type="button" class="btn" data-action="stamp" data-target="sigWitness">Stamp time</button>
-              <label class="btn ghost" for="sigWitnessUpload">Upload</label>
-              <input type="file" id="sigWitnessUpload" data-target="sigWitness" accept="image/*" class="visually-hidden">
-              <span class="hint" id="sigWitnessTime" aria-live="polite">No timestamp yet</span>
-            </div>
-          </article>
         </div>
 
         <article id="preview" class="agreement-preview" aria-label="Agreement preview">
@@ -295,12 +278,6 @@
               <img alt="Lead Tenant signature" data-sig-img="sigTenant">
               <p><strong>Name:</strong> David Martin</p>
               <p><strong>Signed and dated:</strong> <span data-bind="sigTenantStamp">[Signature and UK timestamp]</span></p>
-            </article>
-            <article>
-              <h5>Witness</h5>
-              <img alt="Witness signature" data-sig-img="sigWitness">
-              <p><strong>Name:</strong> <span data-bind="witnessName">[Witness name]</span></p>
-              <p><strong>Signed and dated:</strong> <span data-bind="sigWitnessStamp">[Signature and UK timestamp]</span></p>
             </article>
           </section>
         </article>

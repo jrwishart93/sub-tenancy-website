@@ -721,10 +721,18 @@ const clearFieldErrors = () => {
 };
 
 const clearFormAndStorage = () => {
+  window.clearTimeout(formSaveTimer);
+  window.clearTimeout(indicatorTimer);
+
   resetFormFields();
   clearFieldErrors();
   touchedFields.clear();
   currentFormData = {};
+
+  if (saveIndicator) {
+    saveIndicator.textContent = '\u00A0';
+    saveIndicator.removeAttribute('data-state');
+  }
 
   if (storageAvailable) {
     window.localStorage.removeItem(FORM_STORAGE_KEY);
